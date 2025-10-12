@@ -104,6 +104,24 @@
                         <div class="form-text">Only active forms can be accessed by the public.</div>
                     </div>
 
+                    <div class="mb-3">
+                        <div class="form-check">
+                            <input class="form-check-input" 
+                                   type="checkbox" 
+                                   id="is_primary" 
+                                   name="is_primary" 
+                                   value="1"
+                                   <?= old('is_primary', $form['is_primary']) ? 'checked' : '' ?>>
+                            <label class="form-check-label" for="is_primary">
+                                <strong>Primary Form</strong>
+                            </label>
+                        </div>
+                        <div class="form-text">
+                            <i class="bi bi-info-circle me-1"></i>
+                            The primary form will be featured prominently on the homepage. Only one form can be primary at a time.
+                        </div>
+                    </div>
+
                     <div class="d-flex justify-content-between">
                         <a href="<?= base_url('admin/forms') ?>" class="btn btn-secondary">
                             <i class="bi bi-arrow-left me-2"></i>Cancel

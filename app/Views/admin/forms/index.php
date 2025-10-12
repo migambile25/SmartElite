@@ -64,11 +64,18 @@
                                 </small>
                             </td>
                             <td>
-                                <?php if ($form['is_active']): ?>
-                                    <span class="badge bg-success">Active</span>
-                                <?php else: ?>
-                                    <span class="badge bg-secondary">Inactive</span>
-                                <?php endif; ?>
+                                <div class="d-flex flex-column gap-1">
+                                    <?php if ($form['is_active']): ?>
+                                        <span class="badge bg-success">Active</span>
+                                    <?php else: ?>
+                                        <span class="badge bg-secondary">Inactive</span>
+                                    <?php endif; ?>
+                                    <?php if ($form['is_primary']): ?>
+                                        <span class="badge bg-warning text-dark">
+                                            <i class="bi bi-star-fill me-1"></i>Primary
+                                        </span>
+                                    <?php endif; ?>
+                                </div>
                             </td>
                             <td>
                                 <small class="text-muted">

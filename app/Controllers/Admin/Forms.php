@@ -50,7 +50,8 @@ class Forms extends BaseController
             'slug' => 'permit_empty|min_length[3]|max_length[255]|alpha_dash',
             'description' => 'permit_empty',
             'success_message' => 'permit_empty',
-            'is_active' => 'permit_empty'
+            'is_active' => 'permit_empty',
+            'is_primary' => 'permit_empty'
         ], [
             'title' => [
                 'required' => 'Form title is required',
@@ -75,12 +76,22 @@ class Forms extends BaseController
             $userId = 1;
         }
 
+        // Handle primary form logic - ensure only one form can be primary
+        $isPrimary = $this->request->getPost('is_primary') ? 1 : 0;
+        if ($isPrimary) {
+            // Remove primary status from all other forms
+            $this->formModel->where('deleted_flag', false)
+                           ->set(['is_primary' => 0])
+                           ->update();
+        }
+
         $data = [
             'title' => $this->request->getPost('title'),
             'slug' => $this->request->getPost('slug') ?: null, // Let the model generate if empty
             'description' => $this->request->getPost('description'),
             'success_message' => $this->request->getPost('success_message'),
             'is_active' => $this->request->getPost('is_active') ? 1 : 0,
+            'is_primary' => $isPrimary,
             'created_by' => $userId
         ];
 
@@ -138,7 +149,8 @@ class Forms extends BaseController
             'slug' => 'permit_empty|min_length[3]|max_length[255]|alpha_dash',
             'description' => 'permit_empty',
             'success_message' => 'permit_empty',
-            'is_active' => 'permit_empty'
+            'is_active' => 'permit_empty',
+            'is_primary' => 'permit_empty'
         ], [
             'title' => [
                 'required' => 'Form title is required',
@@ -156,12 +168,23 @@ class Forms extends BaseController
             return redirect()->back()->withInput()->with('validation', $validation);
         }
 
+        // Handle primary form logic - ensure only one form can be primary
+        $isPrimary = $this->request->getPost('is_primary') ? 1 : 0;
+        if ($isPrimary) {
+            // Remove primary status from all other forms (excluding current form)
+            $this->formModel->where('deleted_flag', false)
+                           ->where('id !=', $id)
+                           ->set(['is_primary' => 0])
+                           ->update();
+        }
+
         $data = [
             'title' => $this->request->getPost('title'),
             'slug' => $this->request->getPost('slug') ?: null, // Let the model generate if empty
             'description' => $this->request->getPost('description'),
             'success_message' => $this->request->getPost('success_message'),
-            'is_active' => $this->request->getPost('is_active') ? 1 : 0
+            'is_active' => $this->request->getPost('is_active') ? 1 : 0,
+            'is_primary' => $isPrimary
         ];
 
         if ($this->formModel->update($id, $data)) {

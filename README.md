@@ -126,8 +126,9 @@ After running the setup script, you can log in with:
 
 ### Public Routes
 - `GET /` - SmartElite homepage with initiative information
-- `GET /register/smartelite` - Laptop application form
-- `POST /register/smartelite` - Submit laptop application
+- `GET /forms` - View all available forms
+- `GET /register/{slug}` - Access specific form by slug
+- `POST /register/{slug}` - Submit form data
 
 ### Admin Routes (Protected)
 - `GET /admin` - Dashboard

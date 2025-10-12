@@ -8,6 +8,7 @@ use CodeIgniter\Router\RouteCollection;
 
 // Public routes
 $routes->get('/', 'Home::index');
+$routes->get('/forms', 'PublicForms::index');
 $routes->get('/register/(:segment)', 'Register::index/$1');
 $routes->post('/register/(:segment)', 'Register::submit/$1');
 $routes->get('/register/(:segment)/success', 'Register::success/$1');

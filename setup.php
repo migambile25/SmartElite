@@ -50,5 +50,5 @@ echo "Username: admin\n";
 echo "Email: admin@smartelite.com\n";
 echo "Password: admin123\n\n";
 echo "Access the admin panel at: /admin/login\n";
-echo "Sample form available at: /register/smartelite\n\n";
+echo "Forms available at: /forms\n\n";
 echo "IMPORTANT: Change the default admin password after first login!\n";

@@ -107,7 +107,7 @@
                         </h1>
                         
                         <p class="lead mb-4">
-                            Thank you for your SmartElite laptop application. We have received your submission and our team will review it carefully.
+                            Thank you for your <?= esc($form['title']) ?> submission. We have received your application and our team will review it carefully.
                         </p>
                         
                         <?php if (isset($form) && $form['success_message']): ?>
@@ -118,7 +118,7 @@
                         <?php else: ?>
                         <div class="alert alert-success border-0" style="background: linear-gradient(135deg, #d1fae5 0%, #a7f3d0 100%);">
                             <i class="bi bi-info-circle me-2"></i>
-                            We will contact you within 5-7 business days with further instructions regarding your laptop application.
+                            We will contact you within 5-7 business days with further instructions regarding your application.
                         </div>
                         <?php endif; ?>
                         
@@ -147,7 +147,10 @@
                             <a href="<?= base_url('/') ?>" class="btn btn-primary">
                                 <i class="bi bi-house me-2"></i>Return to Homepage
                             </a>
-                            <a href="<?= base_url('register/smartelite') ?>" class="btn btn-outline-primary">
+                            <a href="<?= base_url('forms') ?>" class="btn btn-outline-primary">
+                                <i class="bi bi-file-earmark-text me-2"></i>View Other Forms
+                            </a>
+                            <a href="<?= base_url('register/' . $form['slug']) ?>" class="btn btn-outline-primary">
                                 <i class="bi bi-arrow-clockwise me-2"></i>Submit Another Application
                             </a>
                         </div>

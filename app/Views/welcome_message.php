@@ -22,10 +22,15 @@
                     training, and support for academic success, innovation, and employability.
                 </p>
                 <div class="d-flex gap-3 flex-wrap">
-                    <a href="<?= base_url('register/smartelite') ?>" class="btn btn-primary btn-lg">
-                        <i class="bi bi-laptop me-2"></i>Apply for Laptop
+                    <?php if ($primaryForm): ?>
+                        <a href="<?= base_url('register/' . $primaryForm['slug']) ?>" class="btn btn-primary btn-lg">
+                            <i class="bi bi-laptop me-2"></i><?= esc($primaryForm['title']) ?>
+                        </a>
+                    <?php endif; ?>
+                    <a href="<?= base_url('forms') ?>" class="btn btn-outline-primary btn-lg">
+                        <i class="bi bi-file-earmark-text me-2"></i>View All Forms
                     </a>
-                    <a href="#about" class="btn btn-outline-primary btn-lg">
+                    <a href="#about" class="btn btn-outline-secondary btn-lg">
                         <i class="bi bi-info-circle me-2"></i>Learn More
                     </a>
                 </div>
@@ -187,9 +192,11 @@
                     and unlock your academic potential.
                 </p>
                 <div class="d-flex justify-content-center gap-3 flex-wrap">
-                    <a href="<?= base_url('register/smartelite') ?>" class="btn btn-light btn-lg">
-                        <i class="bi bi-laptop me-2"></i>Apply for Laptop
-                    </a>
+                    <?php if ($primaryForm): ?>
+                        <a href="<?= base_url('register/' . $primaryForm['slug']) ?>" class="btn btn-light btn-lg">
+                            <i class="bi bi-laptop me-2"></i><?= esc($primaryForm['title']) ?>
+                        </a>
+                    <?php endif; ?>
                     <a href="#about" class="btn btn-outline-light btn-lg">
                         <i class="bi bi-info-circle me-2"></i>Learn More
                     </a>

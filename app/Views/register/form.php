@@ -3,6 +3,29 @@
 <?= $this->section('content') ?>
 
 <div class="container">
+    <!-- Breadcrumb Navigation -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <nav aria-label="breadcrumb">
+                <ol class="breadcrumb">
+                    <li class="breadcrumb-item">
+                        <a href="<?= base_url('/') ?>" class="text-decoration-none">
+                            <i class="bi bi-house me-1"></i>Home
+                        </a>
+                    </li>
+                    <li class="breadcrumb-item">
+                        <a href="<?= base_url('forms') ?>" class="text-decoration-none">
+                            <i class="bi bi-file-earmark-text me-1"></i>Forms
+                        </a>
+                    </li>
+                    <li class="breadcrumb-item active" aria-current="page">
+                        <?= esc($form['title']) ?>
+                    </li>
+                </ol>
+            </nav>
+        </div>
+    </div>
+
     <div class="row justify-content-center">
         <div class="col-lg-8">
             <div class="card shadow-lg border-0">
@@ -166,10 +189,13 @@
                                 </div>
                             <?php endforeach; ?>
                             
-                            <div class="d-grid">
+                            <div class="d-grid gap-2">
                                 <button type="submit" class="btn btn-primary btn-lg">
                                     <i class="bi bi-send me-2"></i>Submit Registration
                                 </button>
+                                <a href="<?= base_url('forms') ?>" class="btn btn-outline-secondary">
+                                    <i class="bi bi-arrow-left me-2"></i>Back to Forms
+                                </a>
                             </div>
                         </form>
                     <?php endif; ?>

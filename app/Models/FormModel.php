@@ -17,6 +17,7 @@ class FormModel extends Model
         'slug',
         'description',
         'is_active',
+        'is_primary',
         'success_message',
         'created_by',
         'created_at',
@@ -196,5 +197,26 @@ class FormModel extends Model
     public function findAllActive(?int $limit = null, int $offset = 0)
     {
         return $this->where('deleted_flag', false)->findAll($limit, $offset);
+    }
+
+    /**
+     * Get the primary form (the one marked as primary)
+     */
+    public function getPrimaryForm()
+    {
+        $primaryForm = $this->where('deleted_flag', false)
+                           ->where('is_active', true)
+                           ->where('is_primary', true)
+                           ->first();
+        
+        // If no primary form is set, fall back to the first active form
+        if (!$primaryForm) {
+            $primaryForm = $this->where('deleted_flag', false)
+                               ->where('is_active', true)
+                               ->orderBy('created_at', 'ASC')
+                               ->first();
+        }
+        
+        return $primaryForm;
     }
 }

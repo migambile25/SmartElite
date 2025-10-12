@@ -8,6 +8,14 @@
         <i class="bi bi-speedometer2 me-2"></i>Dashboard
     </h1>
     <div class="btn-toolbar mb-2 mb-md-0">
+        <div class="btn-group me-2">
+            <a href="<?= base_url('admin/notifications') ?>" class="btn btn-outline-info">
+                <i class="bi bi-bell me-2"></i>Notifications
+            </a>
+            <a href="<?= base_url('admin/duplicates') ?>" class="btn btn-outline-warning">
+                <i class="bi bi-shield-check me-2"></i>Duplicates
+            </a>
+        </div>
         <a href="<?= base_url('admin/forms/create') ?>" class="btn btn-primary">
             <i class="bi bi-plus-circle me-2"></i>Create New Form
         </a>

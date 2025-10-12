@@ -4,17 +4,23 @@ namespace App\Controllers;
 
 use App\Models\FormModel;
 use App\Models\FormSubmissionModel;
+use App\Services\NotificationService;
+use App\Services\DuplicateDetectionService;
 use CodeIgniter\Controller;
 
 class Register extends Controller
 {
     protected $formModel;
     protected $formSubmissionModel;
+    protected $notificationService;
+    protected $duplicateDetectionService;
 
     public function __construct()
     {
         $this->formModel = new FormModel();
         $this->formSubmissionModel = new FormSubmissionModel();
+        $this->notificationService = new NotificationService();
+        $this->duplicateDetectionService = new DuplicateDetectionService();
     }
 
     public function index($slug)
@@ -114,6 +120,15 @@ class Register extends Controller
             }
         }
 
+        // Check for duplicates before saving
+        $duplicates = $this->duplicateDetectionService->checkForDuplicates($form['id'], $submissionData);
+        
+        if (!empty($duplicates)) {
+            $duplicateMessage = $this->duplicateDetectionService->generateDuplicateMessage($duplicates);
+            $this->session->setFlashdata('error', 'Duplicate submission detected: ' . $duplicateMessage);
+            return redirect()->back()->withInput();
+        }
+
         // Save submission
         $submission = [
             'form_id' => $form['id'],
@@ -124,6 +139,19 @@ class Register extends Controller
         ];
 
         if ($this->formSubmissionModel->insert($submission)) {
+            // Send notifications
+            try {
+                // Send confirmation to user
+                $this->notificationService->sendFormSubmissionConfirmation($form, $submissionData);
+                
+                // Send notification to admin
+                $this->notificationService->sendAdminNotification($form, $submissionData);
+                
+            } catch (\Exception $e) {
+                // Log notification errors but don't fail the submission
+                log_message('error', 'Notification error: ' . $e->getMessage());
+            }
+
             // Redirect to success page with form data
             return redirect()->to('/register/' . $slug . '/success');
         } else {

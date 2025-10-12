@@ -32,6 +32,16 @@ $routes->group('admin', ['filter' => 'auth'], function($routes) {
     $routes->get('forms/permanent-delete/(:num)', 'Admin\Forms::permanentDelete/$1');
     $routes->post('forms/permanent-delete/(:num)', 'Admin\Forms::permanentDelete/$1');
     
+    // Notifications
+    $routes->get('notifications', 'Admin\Notifications::index');
+    $routes->post('notifications/test-email', 'Admin\Notifications::testEmail');
+    $routes->post('notifications/test-sms', 'Admin\Notifications::testSMS');
+    $routes->post('notifications/send-test', 'Admin\Notifications::sendTestNotification');
+    
+    // Duplicate Detection
+    $routes->get('duplicates', 'Admin\Duplicates::index');
+    $routes->get('duplicates/form/(:num)', 'Admin\Duplicates::form/$1');
+    
     // Form fields management
         $routes->get('forms/(:num)/fields', 'Admin\FormFields::index/$1');
         $routes->get('forms/(:num)/fields/create', 'Admin\FormFields::create/$1');

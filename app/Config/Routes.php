@@ -1,0 +1,51 @@
+<?php
+
+use CodeIgniter\Router\RouteCollection;
+
+/**
+ * @var RouteCollection $routes
+ */
+
+// Public routes
+$routes->get('/', 'Home::index');
+$routes->get('/register/(:segment)', 'Register::index/$1');
+$routes->post('/register/(:segment)', 'Register::submit/$1');
+$routes->get('/register/(:segment)/success', 'Register::success/$1');
+
+// Admin routes
+$routes->group('admin', ['filter' => 'auth'], function($routes) {
+    // Dashboard
+    $routes->get('/', 'Admin\Dashboard::index');
+    $routes->get('dashboard', 'Admin\Dashboard::index');
+    
+    // Forms management
+    $routes->get('forms', 'Admin\Forms::index');
+    $routes->get('forms/create', 'Admin\Forms::create');
+    $routes->post('forms/store', 'Admin\Forms::store');
+    $routes->get('forms/edit/(:num)', 'Admin\Forms::edit/$1');
+    $routes->post('forms/update/(:num)', 'Admin\Forms::update/$1');
+    $routes->get('forms/delete/(:num)', 'Admin\Forms::delete/$1');
+    $routes->post('forms/delete/(:num)', 'Admin\Forms::delete/$1');
+    
+    // Form fields management
+    $routes->get('forms/(:num)/fields', 'Admin\FormFields::index/$1');
+    $routes->get('forms/(:num)/fields/create', 'Admin\FormFields::create/$1');
+    $routes->post('forms/(:num)/fields/store', 'Admin\FormFields::store/$1');
+    $routes->get('forms/(:num)/fields/edit/(:num)', 'Admin\FormFields::edit/$1/$2');
+    $routes->post('forms/(:num)/fields/update/(:num)', 'Admin\FormFields::update/$1/$2');
+    $routes->get('forms/(:num)/fields/delete/(:num)', 'Admin\FormFields::delete/$1/$2');
+    $routes->post('forms/(:num)/fields/delete/(:num)', 'Admin\FormFields::delete/$1/$2');
+    $routes->post('forms/(:num)/fields/reorder', 'Admin\FormFields::reorder/$1');
+    
+    // Form submissions
+    $routes->get('forms/(:num)/submissions', 'Admin\Submissions::index/$1');
+    $routes->get('forms/(:num)/submissions/(:num)', 'Admin\Submissions::view/$1/$2');
+    $routes->get('forms/(:num)/submissions/export', 'Admin\Submissions::export/$1');
+    $routes->get('forms/(:num)/submissions/delete/(:num)', 'Admin\Submissions::delete/$1/$2');
+    $routes->post('forms/(:num)/submissions/delete/(:num)', 'Admin\Submissions::delete/$1/$2');
+});
+
+// Authentication routes
+$routes->get('admin/login', 'Auth::login');
+$routes->post('admin/login', 'Auth::authenticate');
+$routes->get('admin/logout', 'Auth::logout');

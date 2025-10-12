@@ -16,11 +16,16 @@ class Forms extends BaseController
 
     public function index()
     {
-        $forms = $this->formModel->where('deleted_flag', false)->orderBy('created_at', 'DESC')->findAll();
+        // Get both active and deleted forms for admin view
+        $activeForms = $this->formModel->where('deleted_flag', false)->orderBy('created_at', 'DESC')->findAll();
+        $deletedForms = $this->formModel->where('deleted_flag', true)->orderBy('created_at', 'DESC')->findAll();
+        
+        $forms = array_merge($activeForms, $deletedForms); // Merge for display
 
         $data = [
             'title' => 'Manage Forms - SmartElite Admin',
-            'forms' => $forms
+            'forms' => $forms,
+            'showSidebar' => true
         ];
 
         return view('admin/forms/index', $data);
@@ -197,5 +202,57 @@ class Forms extends BaseController
         ];
 
         return view('admin/forms/delete', $data);
+    }
+
+    public function restore($id)
+    {
+        $form = $this->formModel->findWithDeleted($id);
+        
+        if (!$form || !$form['deleted_flag']) {
+            throw new \CodeIgniter\Exceptions\PageNotFoundException('Form not found or not deleted');
+        }
+
+        if (strtolower($this->request->getMethod()) === 'post') {
+            if ($this->formModel->restore($id)) {
+                session()->setFlashdata('success', 'Form restored successfully!');
+            } else {
+                session()->setFlashdata('error', 'Failed to restore form. Please try again.');
+            }
+            return redirect()->to('/admin/forms');
+        }
+
+        $data = [
+            'title' => 'Restore Form - ' . $form['title'],
+            'form' => $form,
+            'showSidebar' => true
+        ];
+
+        return view('admin/forms/restore', $data);
+    }
+
+    public function permanentDelete($id)
+    {
+        $form = $this->formModel->findWithDeleted($id);
+        
+        if (!$form || !$form['deleted_flag']) {
+            throw new \CodeIgniter\Exceptions\PageNotFoundException('Form not found or not deleted');
+        }
+
+        if (strtolower($this->request->getMethod()) === 'post') {
+            if ($this->formModel->delete($id, true)) { // Force delete
+                session()->setFlashdata('success', 'Form permanently deleted!');
+            } else {
+                session()->setFlashdata('error', 'Failed to permanently delete form. Please try again.');
+            }
+            return redirect()->to('/admin/forms');
+        }
+
+        $data = [
+            'title' => 'Permanently Delete Form - ' . $form['title'],
+            'form' => $form,
+            'showSidebar' => true
+        ];
+
+        return view('admin/forms/permanent_delete', $data);
     }
 }

@@ -26,6 +26,10 @@ $routes->group('admin', ['filter' => 'auth'], function($routes) {
     $routes->post('forms/update/(:num)', 'Admin\Forms::update/$1');
     $routes->get('forms/delete/(:num)', 'Admin\Forms::delete/$1');
     $routes->post('forms/delete/(:num)', 'Admin\Forms::delete/$1');
+    $routes->get('forms/restore/(:num)', 'Admin\Forms::restore/$1');
+    $routes->post('forms/restore/(:num)', 'Admin\Forms::restore/$1');
+    $routes->get('forms/permanent-delete/(:num)', 'Admin\Forms::permanentDelete/$1');
+    $routes->post('forms/permanent-delete/(:num)', 'Admin\Forms::permanentDelete/$1');
     
     // Form fields management
         $routes->get('forms/(:num)/fields', 'Admin\FormFields::index/$1');
@@ -37,6 +41,10 @@ $routes->group('admin', ['filter' => 'auth'], function($routes) {
         $routes->post('forms/(:num)/fields/update/(:num)', 'Admin\FormFields::update/$1/$2');
         $routes->get('forms/(:num)/fields/delete/(:num)', 'Admin\FormFields::delete/$1/$2');
         $routes->post('forms/(:num)/fields/delete/(:num)', 'Admin\FormFields::delete/$1/$2');
+        $routes->get('forms/(:num)/fields/restore/(:num)', 'Admin\FormFields::restore/$1/$2');
+        $routes->post('forms/(:num)/fields/restore/(:num)', 'Admin\FormFields::restore/$1/$2');
+        $routes->get('forms/(:num)/fields/permanent-delete/(:num)', 'Admin\FormFields::permanentDelete/$1/$2');
+        $routes->post('forms/(:num)/fields/permanent-delete/(:num)', 'Admin\FormFields::permanentDelete/$1/$2');
         $routes->post('forms/(:num)/fields/reorder', 'Admin\FormFields::reorder/$1');
     
     // Form submissions
@@ -45,6 +53,10 @@ $routes->group('admin', ['filter' => 'auth'], function($routes) {
     $routes->get('forms/(:num)/submissions/export', 'Admin\Submissions::export/$1');
     $routes->get('forms/(:num)/submissions/delete/(:num)', 'Admin\Submissions::delete/$1/$2');
     $routes->post('forms/(:num)/submissions/delete/(:num)', 'Admin\Submissions::delete/$1/$2');
+    $routes->get('forms/(:num)/submissions/restore/(:num)', 'Admin\Submissions::restore/$1/$2');
+    $routes->post('forms/(:num)/submissions/restore/(:num)', 'Admin\Submissions::restore/$1/$2');
+    $routes->get('forms/(:num)/submissions/permanent-delete/(:num)', 'Admin\Submissions::permanentDelete/$1/$2');
+    $routes->post('forms/(:num)/submissions/permanent-delete/(:num)', 'Admin\Submissions::permanentDelete/$1/$2');
 });
 
 // Authentication routes

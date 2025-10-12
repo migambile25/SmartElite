@@ -131,9 +131,16 @@
                             </thead>
                             <tbody>
                                 <?php foreach ($submissions as $submission): ?>
-                                <tr>
+                                <tr class="<?= $submission['deleted_flag'] ? 'table-danger opacity-75' : '' ?>">
                                     <td>
-                                        <strong>#<?= $submission['id'] ?></strong>
+                                        <strong class="<?= $submission['deleted_flag'] ? 'text-decoration-line-through text-muted' : '' ?>">
+                                            #<?= $submission['id'] ?>
+                                        </strong>
+                                        <?php if ($submission['deleted_flag']): ?>
+                                            <br><small class="text-danger">
+                                                <i class="bi bi-trash me-1"></i>Deleted on <?= $submission['deleted_at'] ? date('M j, Y g:i A', strtotime($submission['deleted_at'])) : 'Unknown' ?>
+                                            </small>
+                                        <?php endif; ?>
                                     </td>
                                     <td>
                                         <div>
@@ -145,18 +152,35 @@
                                         <code><?= esc($submission['ip_address']) ?></code>
                                     </td>
                                     <td>
-                                        <div class="btn-group" role="group">
-                                            <a href="<?= base_url('admin/forms/' . $form['id'] . '/submissions/' . $submission['id']) ?>" 
-                                               class="btn btn-sm btn-outline-primary" 
-                                               title="View Submission">
-                                                <i class="bi bi-eye"></i>
-                                            </a>
-                                            <a href="<?= base_url('admin/forms/' . $form['id'] . '/submissions/delete/' . $submission['id']) ?>" 
-                                               class="btn btn-sm btn-outline-danger btn-delete" 
-                                               title="Delete Submission">
-                                                <i class="bi bi-trash"></i>
-                                            </a>
-                                        </div>
+                                        <?php if ($submission['deleted_flag']): ?>
+                                            <div class="btn-group" role="group">
+                                                <a href="<?= base_url('admin/forms/' . $form['id'] . '/submissions/restore/' . $submission['id']) ?>" 
+                                                   class="btn btn-sm btn-outline-success" 
+                                                   title="Restore Submission"
+                                                   onclick="return confirm('Are you sure you want to restore this submission?')">
+                                                    <i class="bi bi-arrow-clockwise"></i>
+                                                </a>
+                                                <a href="<?= base_url('admin/forms/' . $form['id'] . '/submissions/permanent-delete/' . $submission['id']) ?>" 
+                                                   class="btn btn-sm btn-outline-danger" 
+                                                   title="Permanently Delete Submission"
+                                                   onclick="return confirm('Are you sure you want to permanently delete this submission? This action cannot be undone.')">
+                                                    <i class="bi bi-trash-fill"></i>
+                                                </a>
+                                            </div>
+                                        <?php else: ?>
+                                            <div class="btn-group" role="group">
+                                                <a href="<?= base_url('admin/forms/' . $form['id'] . '/submissions/' . $submission['id']) ?>" 
+                                                   class="btn btn-sm btn-outline-primary" 
+                                                   title="View Submission">
+                                                    <i class="bi bi-eye"></i>
+                                                </a>
+                                                <a href="<?= base_url('admin/forms/' . $form['id'] . '/submissions/delete/' . $submission['id']) ?>" 
+                                                   class="btn btn-sm btn-outline-danger btn-delete" 
+                                                   title="Delete Submission">
+                                                    <i class="bi bi-trash"></i>
+                                                </a>
+                                            </div>
+                                        <?php endif; ?>
                                     </td>
                                 </tr>
                                 <?php endforeach; ?>

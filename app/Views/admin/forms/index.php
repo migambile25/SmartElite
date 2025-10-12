@@ -39,10 +39,17 @@
                     </thead>
                     <tbody>
                         <?php foreach ($forms as $form): ?>
-                        <tr>
+                        <tr class="<?= $form['deleted_flag'] ? 'table-danger opacity-75' : '' ?>">
                             <td>
                                 <div>
-                                    <strong><?= esc($form['title']) ?></strong>
+                                    <strong class="<?= $form['deleted_flag'] ? 'text-decoration-line-through text-muted' : '' ?>">
+                                        <?= esc($form['title']) ?>
+                                    </strong>
+                                    <?php if ($form['deleted_flag']): ?>
+                                        <br><small class="text-danger">
+                                            <i class="bi bi-trash me-1"></i>Deleted on <?= $form['deleted_at'] ? date('M j, Y g:i A', strtotime($form['deleted_at'])) : 'Unknown' ?>
+                                        </small>
+                                    <?php endif; ?>
                                     <?php if (!empty($form['description'])): ?>
                                         <br><small class="text-muted"><?= esc($form['description']) ?></small>
                                     <?php endif; ?>
@@ -69,28 +76,45 @@
                                 </small>
                             </td>
                             <td>
-                                <div class="btn-group" role="group">
-                                    <a href="<?= base_url('admin/forms/' . $form['id'] . '/fields') ?>" 
-                                       class="btn btn-sm btn-outline-primary" 
-                                       title="Manage Fields">
-                                        <i class="bi bi-list-ul"></i>
-                                    </a>
-                                    <a href="<?= base_url('admin/forms/' . $form['id'] . '/submissions') ?>" 
-                                       class="btn btn-sm btn-outline-info" 
-                                       title="View Submissions">
-                                        <i class="bi bi-inbox"></i>
-                                    </a>
-                                    <a href="<?= base_url('admin/forms/edit/' . $form['id']) ?>" 
-                                       class="btn btn-sm btn-outline-warning" 
-                                       title="Edit Form">
-                                        <i class="bi bi-pencil"></i>
-                                    </a>
-                                    <a href="<?= base_url('admin/forms/delete/' . $form['id']) ?>" 
-                                       class="btn btn-sm btn-outline-danger btn-delete" 
-                                       title="Delete Form">
-                                        <i class="bi bi-trash"></i>
-                                    </a>
-                                </div>
+                                <?php if ($form['deleted_flag']): ?>
+                                    <div class="btn-group" role="group">
+                                        <a href="<?= base_url('admin/forms/restore/' . $form['id']) ?>" 
+                                           class="btn btn-sm btn-outline-success" 
+                                           title="Restore Form"
+                                           onclick="return confirm('Are you sure you want to restore this form?')">
+                                            <i class="bi bi-arrow-clockwise"></i>
+                                        </a>
+                                        <a href="<?= base_url('admin/forms/permanent-delete/' . $form['id']) ?>" 
+                                           class="btn btn-sm btn-outline-danger" 
+                                           title="Permanently Delete Form"
+                                           onclick="return confirm('Are you sure you want to permanently delete this form? This action cannot be undone.')">
+                                            <i class="bi bi-trash-fill"></i>
+                                        </a>
+                                    </div>
+                                <?php else: ?>
+                                    <div class="btn-group" role="group">
+                                        <a href="<?= base_url('admin/forms/' . $form['id'] . '/fields') ?>" 
+                                           class="btn btn-sm btn-outline-primary" 
+                                           title="Manage Fields">
+                                            <i class="bi bi-list-ul"></i>
+                                        </a>
+                                        <a href="<?= base_url('admin/forms/' . $form['id'] . '/submissions') ?>" 
+                                           class="btn btn-sm btn-outline-info" 
+                                           title="View Submissions">
+                                            <i class="bi bi-inbox"></i>
+                                        </a>
+                                        <a href="<?= base_url('admin/forms/edit/' . $form['id']) ?>" 
+                                           class="btn btn-sm btn-outline-warning" 
+                                           title="Edit Form">
+                                            <i class="bi bi-pencil"></i>
+                                        </a>
+                                        <a href="<?= base_url('admin/forms/delete/' . $form['id']) ?>" 
+                                           class="btn btn-sm btn-outline-danger btn-delete" 
+                                           title="Delete Form">
+                                            <i class="bi bi-trash"></i>
+                                        </a>
+                                    </div>
+                                <?php endif; ?>
                             </td>
                         </tr>
                         <?php endforeach; ?>

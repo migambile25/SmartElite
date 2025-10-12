@@ -25,7 +25,18 @@ class Submissions extends BaseController
             throw new \CodeIgniter\Exceptions\PageNotFoundException('Form not found');
         }
 
-        $submissions = $this->formSubmissionModel->getSubmissionsByFormId($formId);
+        // Get both active and deleted submissions for admin view
+        $activeSubmissions = $this->formSubmissionModel->where('form_id', $formId)
+                                                     ->where('deleted_flag', false)
+                                                     ->orderBy('submitted_at', 'DESC')
+                                                     ->findAll();
+        
+        $deletedSubmissions = $this->formSubmissionModel->where('form_id', $formId)
+                                                       ->where('deleted_flag', true)
+                                                       ->orderBy('submitted_at', 'DESC')
+                                                       ->findAll();
+        
+        $submissions = array_merge($activeSubmissions, $deletedSubmissions); // Merge for display
         $stats = $this->formSubmissionModel->getSubmissionStats($formId);
 
         $data = [
@@ -103,5 +114,61 @@ class Submissions extends BaseController
         ];
 
         return view('admin/submissions/delete', $data);
+    }
+
+    public function restore($formId, $submissionId)
+    {
+        $form = $this->formModel->findActive($formId);
+        $submission = $this->formSubmissionModel->findWithDeleted($submissionId);
+        
+        if (!$form || !$submission || $submission['form_id'] != $formId || !$submission['deleted_flag']) {
+            throw new \CodeIgniter\Exceptions\PageNotFoundException('Form or submission not found or not deleted');
+        }
+
+        if (strtolower($this->request->getMethod()) === 'post') {
+            if ($this->formSubmissionModel->restore($submissionId)) {
+                session()->setFlashdata('success', 'Submission restored successfully!');
+            } else {
+                session()->setFlashdata('error', 'Failed to restore submission. Please try again.');
+            }
+            return redirect()->to('/admin/forms/' . $formId . '/submissions');
+        }
+
+        $data = [
+            'title' => 'Restore Submission - ' . $form['title'],
+            'form' => $form,
+            'submission' => $submission,
+            'showSidebar' => true
+        ];
+
+        return view('admin/submissions/restore', $data);
+    }
+
+    public function permanentDelete($formId, $submissionId)
+    {
+        $form = $this->formModel->findActive($formId);
+        $submission = $this->formSubmissionModel->findWithDeleted($submissionId);
+        
+        if (!$form || !$submission || $submission['form_id'] != $formId || !$submission['deleted_flag']) {
+            throw new \CodeIgniter\Exceptions\PageNotFoundException('Form or submission not found or not deleted');
+        }
+
+        if (strtolower($this->request->getMethod()) === 'post') {
+            if ($this->formSubmissionModel->delete($submissionId, true)) { // Force delete
+                session()->setFlashdata('success', 'Submission permanently deleted!');
+            } else {
+                session()->setFlashdata('error', 'Failed to permanently delete submission. Please try again.');
+            }
+            return redirect()->to('/admin/forms/' . $formId . '/submissions');
+        }
+
+        $data = [
+            'title' => 'Permanently Delete Submission - ' . $form['title'],
+            'form' => $form,
+            'submission' => $submission,
+            'showSidebar' => true
+        ];
+
+        return view('admin/submissions/permanent_delete', $data);
     }
 }

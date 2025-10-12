@@ -76,18 +76,32 @@
                     </ul>
                 </div>
 
-                <form method="POST" action="<?= base_url('admin/forms/' . $form['id'] . '/fields/delete/' . $field['id']) ?>" class="mt-4">
+                <form method="POST" action="<?= base_url('admin/forms/' . $form['id'] . '/fields/delete/' . $field['id']) ?>" class="mt-4" id="deleteForm">
                     <?= csrf_field() ?>
                     
                     <div class="d-flex justify-content-between">
                         <a href="<?= base_url('admin/forms/' . $form['id'] . '/fields') ?>" class="btn btn-secondary">
                             <i class="bi bi-arrow-left me-2"></i>Cancel
                         </a>
-                        <button type="submit" class="btn btn-danger">
+                        <button type="submit" class="btn btn-danger" id="deleteBtn">
                             <i class="bi bi-trash me-2"></i>Yes, Delete Field
                         </button>
                     </div>
                 </form>
+
+                <script>
+                document.getElementById('deleteForm').addEventListener('submit', function(e) {
+                    console.log('Form submitted!');
+                    console.log('Form action:', this.action);
+                    console.log('Form method:', this.method);
+                    console.log('CSRF token:', document.querySelector('input[name="csrf_test_name"]').value);
+                    
+                    // Show loading state
+                    const deleteBtn = document.getElementById('deleteBtn');
+                    deleteBtn.innerHTML = '<i class="bi bi-hourglass-split me-2"></i>Deleting...';
+                    deleteBtn.disabled = true;
+                });
+                </script>
             </div>
         </div>
     </div>

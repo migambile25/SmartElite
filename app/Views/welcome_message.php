@@ -159,8 +159,8 @@
                     </p>
                 </div>
             </div>
-        </div>
-        
+</div>
+
         <div class="col-lg-4 mb-4">
             <div class="card h-100 border-0 shadow-sm">
                 <div class="card-body text-center p-4">

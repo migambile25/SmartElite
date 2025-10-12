@@ -28,14 +28,16 @@ $routes->group('admin', ['filter' => 'auth'], function($routes) {
     $routes->post('forms/delete/(:num)', 'Admin\Forms::delete/$1');
     
     // Form fields management
-    $routes->get('forms/(:num)/fields', 'Admin\FormFields::index/$1');
-    $routes->get('forms/(:num)/fields/create', 'Admin\FormFields::create/$1');
-    $routes->post('forms/(:num)/fields/store', 'Admin\FormFields::store/$1');
-    $routes->get('forms/(:num)/fields/edit/(:num)', 'Admin\FormFields::edit/$1/$2');
-    $routes->post('forms/(:num)/fields/update/(:num)', 'Admin\FormFields::update/$1/$2');
-    $routes->get('forms/(:num)/fields/delete/(:num)', 'Admin\FormFields::delete/$1/$2');
-    $routes->post('forms/(:num)/fields/delete/(:num)', 'Admin\FormFields::delete/$1/$2');
-    $routes->post('forms/(:num)/fields/reorder', 'Admin\FormFields::reorder/$1');
+        $routes->get('forms/(:num)/fields', 'Admin\FormFields::index/$1');
+        $routes->get('forms/(:num)/fields/create', 'Admin\FormFields::create/$1');
+        $routes->post('forms/(:num)/fields/store', 'Admin\FormFields::store/$1');
+        $routes->get('forms/(:num)/fields/bulk-create', 'Admin\FormFields::bulkCreate/$1');
+        $routes->post('forms/(:num)/fields/bulk-store', 'Admin\FormFields::bulkStore/$1');
+        $routes->get('forms/(:num)/fields/edit/(:num)', 'Admin\FormFields::edit/$1/$2');
+        $routes->post('forms/(:num)/fields/update/(:num)', 'Admin\FormFields::update/$1/$2');
+        $routes->get('forms/(:num)/fields/delete/(:num)', 'Admin\FormFields::delete/$1/$2');
+        $routes->post('forms/(:num)/fields/delete/(:num)', 'Admin\FormFields::delete/$1/$2');
+        $routes->post('forms/(:num)/fields/reorder', 'Admin\FormFields::reorder/$1');
     
     // Form submissions
     $routes->get('forms/(:num)/submissions', 'Admin\Submissions::index/$1');

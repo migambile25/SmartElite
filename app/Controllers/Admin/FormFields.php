@@ -239,4 +239,103 @@ class FormFields extends BaseController
 
         return redirect()->to('/admin/forms/' . $formId . '/fields');
     }
+
+    public function bulkCreate($formId)
+    {
+        $form = $this->formModel->find($formId);
+        
+        if (!$form) {
+            throw new \CodeIgniter\Exceptions\PageNotFoundException('Form not found');
+        }
+
+        $data = [
+            'title' => 'Bulk Add Fields - ' . $form['title'],
+            'form' => $form,
+            'validation' => \Config\Services::validation(),
+            'showSidebar' => true
+        ];
+
+        return view('admin/fields/bulk_create', $data);
+    }
+
+    public function bulkStore($formId)
+    {
+        $form = $this->formModel->find($formId);
+        
+        if (!$form) {
+            throw new \CodeIgniter\Exceptions\PageNotFoundException('Form not found');
+        }
+
+        $fields = $this->request->getPost('fields');
+        
+        if (empty($fields) || !is_array($fields)) {
+            session()->setFlashdata('error', 'No fields provided.');
+            return redirect()->back();
+        }
+
+        $validation = \Config\Services::validation();
+        $errors = [];
+        $successCount = 0;
+
+        foreach ($fields as $index => $field) {
+            $validation->setRules([
+                'field_name' => 'required|min_length[2]|max_length[255]|alpha_dash',
+                'field_label' => 'required|min_length[2]|max_length[255]',
+                'field_type' => 'required|in_list[text,email,tel,number,date,textarea,select,radio,checkbox,file]',
+                'is_required' => 'permit_empty',
+                'field_order' => 'permit_empty|integer'
+            ], [
+                'field_name' => [
+                    'required' => "Field name is required for field " . ($index + 1),
+                    'min_length' => "Field name must be at least 2 characters long for field " . ($index + 1),
+                    'max_length' => "Field name cannot exceed 255 characters for field " . ($index + 1),
+                    'alpha_dash' => "Field name can only contain letters, numbers, dashes and underscores for field " . ($index + 1)
+                ],
+                'field_label' => [
+                    'required' => "Field label is required for field " . ($index + 1),
+                    'min_length' => "Field label must be at least 2 characters long for field " . ($index + 1),
+                    'max_length' => "Field label cannot exceed 255 characters for field " . ($index + 1)
+                ],
+                'field_type' => [
+                    'required' => "Field type is required for field " . ($index + 1),
+                    'in_list' => "Field type must be one of: text, email, tel, number, date, textarea, select, radio, checkbox, file for field " . ($index + 1)
+                ]
+            ]);
+
+            if (!$validation->withRequest($this->request)->run()) {
+                $errors = array_merge($errors, $validation->getErrors());
+            }
+        }
+
+        if (!empty($errors)) {
+            session()->setFlashdata('error', 'Validation errors: ' . implode(', ', $errors));
+            return redirect()->back()->withInput();
+        }
+
+        // Process each field
+        foreach ($fields as $field) {
+            $data = [
+                'form_id' => $formId,
+                'field_name' => $field['field_name'],
+                'field_label' => $field['field_label'],
+                'field_type' => $field['field_type'],
+                'field_options' => $field['field_options'] ?? null,
+                'is_required' => isset($field['is_required']) ? 1 : 0,
+                'field_order' => $field['field_order'] ?? 0,
+                'validation_rules' => $field['validation_rules'] ?? null
+            ];
+
+            if ($this->formFieldModel->insert($data)) {
+                $successCount++;
+            }
+        }
+
+        if ($successCount > 0) {
+            session()->setFlashdata('success', "Successfully created {$successCount} field(s)!");
+        } else {
+            session()->setFlashdata('error', 'Failed to create any fields. Please try again.');
+        }
+
+        return redirect()->to('/admin/forms/' . $formId . '/fields');
+    }
 }

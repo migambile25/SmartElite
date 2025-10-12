@@ -8,10 +8,15 @@
         <i class="bi bi-list-ul me-2"></i>Manage Fields - <?= esc($form['title']) ?>
     </h1>
     <div class="btn-toolbar mb-2 mb-md-0">
-        <a href="<?= base_url('admin/forms/' . $form['id'] . '/fields/create') ?>" class="btn btn-primary">
-            <i class="bi bi-plus-circle me-2"></i>Add Field
-        </a>
-        <a href="<?= base_url('admin/forms') ?>" class="btn btn-outline-secondary ms-2">
+        <div class="btn-group me-2" role="group">
+            <a href="<?= base_url('admin/forms/' . $form['id'] . '/fields/create') ?>" class="btn btn-primary">
+                <i class="bi bi-plus-circle me-2"></i>Add Field
+            </a>
+            <a href="<?= base_url('admin/forms/' . $form['id'] . '/fields/bulk-create') ?>" class="btn btn-success">
+                <i class="bi bi-plus-square me-2"></i>Bulk Add Fields
+            </a>
+        </div>
+        <a href="<?= base_url('admin/forms') ?>" class="btn btn-outline-secondary">
             <i class="bi bi-arrow-left me-2"></i>Back to Forms
         </a>
     </div>
@@ -31,9 +36,14 @@
                         <i class="bi bi-list-ul text-muted" style="font-size: 4rem;"></i>
                         <h4 class="mt-3 text-muted">No Fields Added Yet</h4>
                         <p class="text-muted">Start building your form by adding fields.</p>
-                        <a href="<?= base_url('admin/forms/' . $form['id'] . '/fields/create') ?>" class="btn btn-primary">
-                            <i class="bi bi-plus-circle me-2"></i>Add Your First Field
-                        </a>
+                        <div class="d-flex justify-content-center gap-2 flex-wrap">
+                            <a href="<?= base_url('admin/forms/' . $form['id'] . '/fields/create') ?>" class="btn btn-primary">
+                                <i class="bi bi-plus-circle me-2"></i>Add Single Field
+                            </a>
+                            <a href="<?= base_url('admin/forms/' . $form['id'] . '/fields/bulk-create') ?>" class="btn btn-success">
+                                <i class="bi bi-plus-square me-2"></i>Bulk Add Fields
+                            </a>
+                        </div>
                     </div>
                 <?php else: ?>
                     <div class="table-responsive">

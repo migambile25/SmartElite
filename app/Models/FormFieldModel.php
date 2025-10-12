@@ -87,8 +87,17 @@ class FormFieldModel extends Model
 
     protected function processFieldOptions(array $data)
     {
-        if (isset($data['data']['field_options']) && is_array($data['data']['field_options'])) {
-            $data['data']['field_options'] = json_encode($data['data']['field_options']);
+        if (isset($data['data']['field_options'])) {
+            if (is_array($data['data']['field_options'])) {
+                $data['data']['field_options'] = json_encode($data['data']['field_options']);
+            } elseif (is_string($data['data']['field_options']) && !empty(trim($data['data']['field_options']))) {
+                // Handle textarea input - split by newlines and create array
+                $options = array_filter(array_map('trim', explode("\n", $data['data']['field_options'])));
+                $data['data']['field_options'] = !empty($options) ? json_encode($options) : null;
+            } else {
+                // Empty or null value
+                $data['data']['field_options'] = null;
+            }
         }
         return $data;
     }

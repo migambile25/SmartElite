@@ -23,7 +23,8 @@ class FormFieldModel extends Model
         'validation_rules',
         'created_at',
         'updated_at',
-        'deleted_flag'
+        'deleted_flag',
+        'deleted_at'
     ];
 
     // Dates

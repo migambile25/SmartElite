@@ -25,7 +25,18 @@ class FormFields extends BaseController
             throw new \CodeIgniter\Exceptions\PageNotFoundException('Form not found');
         }
 
-        $fields = $this->formFieldModel->getFieldsByFormId($formId);
+        // Get both active and deleted fields for admin view
+        $activeFields = $this->formFieldModel->where('form_id', $formId)
+                                           ->where('deleted_flag', false)
+                                           ->orderBy('field_order', 'ASC')
+                                           ->findAll();
+        
+        $deletedFields = $this->formFieldModel->where('form_id', $formId)
+                                            ->where('deleted_flag', true)
+                                            ->orderBy('field_order', 'ASC')
+                                            ->findAll();
+        
+        $fields = array_merge($activeFields, $deletedFields);
 
         $data = [
             'title' => 'Manage Fields - ' . $form['title'],
@@ -395,5 +406,61 @@ class FormFields extends BaseController
         }
 
         return redirect()->to('/admin/forms/' . $formId . '/fields');
+    }
+
+    public function restore($formId, $fieldId)
+    {
+        $form = $this->formModel->findActive($formId);
+        $field = $this->formFieldModel->findWithDeleted($fieldId);
+        
+        if (!$form || !$field || $field['form_id'] != $formId || !$field['deleted_flag']) {
+            throw new \CodeIgniter\Exceptions\PageNotFoundException('Form or field not found');
+        }
+
+        if (strtolower($this->request->getMethod()) === 'post') {
+            if ($this->formFieldModel->restore($fieldId)) {
+                session()->setFlashdata('success', 'Field restored successfully!');
+            } else {
+                session()->setFlashdata('error', 'Failed to restore field. Please try again.');
+            }
+            return redirect()->to('/admin/forms/' . $formId . '/fields');
+        }
+
+        $data = [
+            'title' => 'Restore Field - ' . $form['title'],
+            'form' => $form,
+            'field' => $field,
+            'showSidebar' => true
+        ];
+
+        return view('admin/fields/restore', $data);
+    }
+
+    public function permanentDelete($formId, $fieldId)
+    {
+        $form = $this->formModel->findActive($formId);
+        $field = $this->formFieldModel->findWithDeleted($fieldId);
+        
+        if (!$form || !$field || $field['form_id'] != $formId || !$field['deleted_flag']) {
+            throw new \CodeIgniter\Exceptions\PageNotFoundException('Form or field not found');
+        }
+
+        if (strtolower($this->request->getMethod()) === 'post') {
+            if ($this->formFieldModel->delete($fieldId, true)) { // Force delete
+                session()->setFlashdata('success', 'Field permanently deleted!');
+            } else {
+                session()->setFlashdata('error', 'Failed to permanently delete field. Please try again.');
+            }
+            return redirect()->to('/admin/forms/' . $formId . '/fields');
+        }
+
+        $data = [
+            'title' => 'Permanently Delete Field - ' . $form['title'],
+            'form' => $form,
+            'field' => $field,
+            'showSidebar' => true
+        ];
+
+        return view('admin/fields/permanent_delete', $data);
     }
 }

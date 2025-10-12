@@ -19,7 +19,8 @@ class UserModel extends Model
         'role',
         'created_at',
         'updated_at',
-        'deleted_flag'
+        'deleted_flag',
+        'deleted_at'
     ];
 
     // Dates
@@ -112,6 +113,25 @@ class UserModel extends Model
      */
     public function findWithDeleted($id)
     {
-        return $this->find($id);
+        return parent::find($id);
+    }
+
+    /**
+     * Get active (non-deleted) users only
+     */
+    public function findActive($id = null)
+    {
+        if ($id === null) {
+            return $this->where('deleted_flag', false)->findAll();
+        }
+        return $this->where('deleted_flag', false)->where('id', $id)->first();
+    }
+
+    /**
+     * Get all active (non-deleted) users
+     */
+    public function findAllActive(?int $limit = null, int $offset = 0)
+    {
+        return $this->where('deleted_flag', false)->findAll($limit, $offset);
     }
 }

@@ -21,7 +21,8 @@ class FormModel extends Model
         'created_by',
         'created_at',
         'updated_at',
-        'deleted_flag'
+        'deleted_flag',
+        'deleted_at'
     ];
 
     // Dates
@@ -121,6 +122,7 @@ class FormModel extends Model
 
         $formFieldModel = new FormFieldModel();
         $form['fields'] = $formFieldModel->where('form_id', $id)
+                                       ->where('deleted_flag', false)
                                        ->orderBy('field_order', 'ASC')
                                        ->findAll();
 
@@ -131,6 +133,7 @@ class FormModel extends Model
     {
         $form = $this->where('slug', $slug)
                     ->where('is_active', true)
+                    ->where('deleted_flag', false)
                     ->first();
         
         if (!$form) {
@@ -139,6 +142,7 @@ class FormModel extends Model
 
         $formFieldModel = new FormFieldModel();
         $form['fields'] = $formFieldModel->where('form_id', $form['id'])
+                                       ->where('deleted_flag', false)
                                        ->orderBy('field_order', 'ASC')
                                        ->findAll();
 
@@ -172,6 +176,25 @@ class FormModel extends Model
      */
     public function findWithDeleted($id)
     {
-        return $this->find($id);
+        return parent::find($id);
+    }
+
+    /**
+     * Get active (non-deleted) forms only
+     */
+    public function findActive($id = null)
+    {
+        if ($id === null) {
+            return $this->where('deleted_flag', false)->findAll();
+        }
+        return $this->where('deleted_flag', false)->where('id', $id)->first();
+    }
+
+    /**
+     * Get all active (non-deleted) forms
+     */
+    public function findAllActive(?int $limit = null, int $offset = 0)
+    {
+        return $this->where('deleted_flag', false)->findAll($limit, $offset);
     }
 }

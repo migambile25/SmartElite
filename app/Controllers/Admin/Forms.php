@@ -16,7 +16,7 @@ class Forms extends BaseController
 
     public function index()
     {
-        $forms = $this->formModel->orderBy('created_at', 'DESC')->findAll();
+        $forms = $this->formModel->where('deleted_flag', false)->orderBy('created_at', 'DESC')->findAll();
 
         $data = [
             'title' => 'Manage Forms - SmartElite Admin',
@@ -170,14 +170,20 @@ class Forms extends BaseController
 
     public function delete($id)
     {
-        $form = $this->formModel->find($id);
+        $form = $this->formModel->findActive($id);
         
         if (!$form) {
+            // Check if form is soft-deleted
+            $deletedForm = $this->formModel->findWithDeleted($id);
+            if ($deletedForm && $deletedForm['deleted_flag']) {
+                session()->setFlashdata('error', 'This form has already been deleted.');
+                return redirect()->to('/admin/forms');
+            }
             throw new \CodeIgniter\Exceptions\PageNotFoundException('Form not found');
         }
 
-        if ($this->request->getMethod() === 'post') {
-            if ($this->formModel->delete($id)) {
+        if (strtolower($this->request->getMethod()) === 'post') {
+            if ($this->formModel->softDelete($id)) {
                 session()->setFlashdata('success', 'Form deleted successfully!');
             } else {
                 session()->setFlashdata('error', 'Failed to delete form. Please try again.');

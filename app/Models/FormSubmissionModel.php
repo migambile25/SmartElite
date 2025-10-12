@@ -18,7 +18,8 @@ class FormSubmissionModel extends Model
         'ip_address',
         'user_agent',
         'submitted_at',
-        'deleted_flag'
+        'deleted_flag',
+        'deleted_at'
     ];
 
     // Dates
@@ -74,6 +75,7 @@ class FormSubmissionModel extends Model
     public function getSubmissionsByFormId($formId, $limit = null, $offset = 0)
     {
         $builder = $this->where('form_id', $formId)
+                       ->where('deleted_flag', false)
                        ->orderBy('submitted_at', 'DESC');
         
         if ($limit) {
@@ -203,6 +205,25 @@ class FormSubmissionModel extends Model
      */
     public function findWithDeleted($id)
     {
-        return $this->find($id);
+        return parent::find($id);
+    }
+
+    /**
+     * Get active (non-deleted) submissions only
+     */
+    public function findActive($id = null)
+    {
+        if ($id === null) {
+            return $this->where('deleted_flag', false)->findAll();
+        }
+        return $this->where('deleted_flag', false)->where('id', $id)->first();
+    }
+
+    /**
+     * Get all active (non-deleted) submissions
+     */
+    public function findAllActive(?int $limit = null, int $offset = 0)
+    {
+        return $this->where('deleted_flag', false)->findAll($limit, $offset);
     }
 }

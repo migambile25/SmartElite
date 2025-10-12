@@ -59,37 +59,65 @@
                             </thead>
                             <tbody>
                                 <?php foreach ($fields as $field): ?>
-                                <tr>
+                                <tr class="<?= $field['deleted_flag'] ? 'table-danger opacity-75' : '' ?>">
                                     <td>
-                                        <span class="badge bg-secondary"><?= $field['field_order'] ?></span>
+                                        <span class="badge <?= $field['deleted_flag'] ? 'bg-danger' : 'bg-secondary' ?>">
+                                            <?= $field['field_order'] ?>
+                                        </span>
                                     </td>
                                     <td>
-                                        <strong><?= esc($field['field_label']) ?></strong>
+                                        <strong class="<?= $field['deleted_flag'] ? 'text-decoration-line-through text-muted' : '' ?>">
+                                            <?= esc($field['field_label']) ?>
+                                        </strong>
                                         <br><small class="text-muted"><?= esc($field['field_name']) ?></small>
-                                    </td>
-                                    <td>
-                                        <span class="badge bg-info"><?= esc($field['field_type']) ?></span>
-                                    </td>
-                                    <td>
-                                        <?php if ($field['is_required']): ?>
-                                            <span class="badge bg-danger">Required</span>
-                                        <?php else: ?>
-                                            <span class="badge bg-secondary">Optional</span>
+                                        <?php if ($field['deleted_flag']): ?>
+                                            <br><small class="text-danger">
+                                                <i class="bi bi-trash me-1"></i>Deleted on <?= $field['deleted_at'] ? date('M j, Y g:i A', strtotime($field['deleted_at'])) : 'Unknown' ?>
+                                            </small>
                                         <?php endif; ?>
                                     </td>
                                     <td>
-                                        <div class="btn-group" role="group">
-                                            <a href="<?= base_url('admin/forms/' . $form['id'] . '/fields/edit/' . $field['id']) ?>" 
-                                               class="btn btn-sm btn-outline-warning" 
-                                               title="Edit Field">
-                                                <i class="bi bi-pencil"></i>
-                                            </a>
-                                            <a href="<?= base_url('admin/forms/' . $form['id'] . '/fields/delete/' . $field['id']) ?>" 
-                                               class="btn btn-sm btn-outline-danger btn-delete" 
-                                               title="Delete Field">
-                                                <i class="bi bi-trash"></i>
-                                            </a>
-                                        </div>
+                                        <span class="badge <?= $field['deleted_flag'] ? 'bg-danger' : 'bg-info' ?>">
+                                            <?= esc($field['field_type']) ?>
+                                        </span>
+                                    </td>
+                                    <td>
+                                        <?php if ($field['is_required']): ?>
+                                            <span class="badge <?= $field['deleted_flag'] ? 'bg-danger' : 'bg-danger' ?>">Required</span>
+                                        <?php else: ?>
+                                            <span class="badge <?= $field['deleted_flag'] ? 'bg-danger' : 'bg-secondary' ?>">Optional</span>
+                                        <?php endif; ?>
+                                    </td>
+                                    <td>
+                                        <?php if ($field['deleted_flag']): ?>
+                                            <div class="btn-group" role="group">
+                                                <a href="<?= base_url('admin/forms/' . $form['id'] . '/fields/restore/' . $field['id']) ?>" 
+                                                   class="btn btn-sm btn-outline-success" 
+                                                   title="Restore Field"
+                                                   onclick="return confirm('Are you sure you want to restore this field?')">
+                                                    <i class="bi bi-arrow-clockwise"></i>
+                                                </a>
+                                                <a href="<?= base_url('admin/forms/' . $form['id'] . '/fields/permanent-delete/' . $field['id']) ?>" 
+                                                   class="btn btn-sm btn-outline-danger" 
+                                                   title="Permanently Delete Field"
+                                                   onclick="return confirm('Are you sure you want to permanently delete this field? This action cannot be undone.')">
+                                                    <i class="bi bi-trash-fill"></i>
+                                                </a>
+                                            </div>
+                                        <?php else: ?>
+                                            <div class="btn-group" role="group">
+                                                <a href="<?= base_url('admin/forms/' . $form['id'] . '/fields/edit/' . $field['id']) ?>" 
+                                                   class="btn btn-sm btn-outline-warning" 
+                                                   title="Edit Field">
+                                                    <i class="bi bi-pencil"></i>
+                                                </a>
+                                                <a href="<?= base_url('admin/forms/' . $form['id'] . '/fields/delete/' . $field['id']) ?>" 
+                                                   class="btn btn-sm btn-outline-danger btn-delete" 
+                                                   title="Delete Field">
+                                                    <i class="bi bi-trash"></i>
+                                                </a>
+                                            </div>
+                                        <?php endif; ?>
                                     </td>
                                 </tr>
                                 <?php endforeach; ?>

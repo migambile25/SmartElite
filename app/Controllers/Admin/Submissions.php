@@ -19,7 +19,7 @@ class Submissions extends BaseController
 
     public function index($formId)
     {
-        $form = $this->formModel->find($formId);
+        $form = $this->formModel->findActive($formId);
         
         if (!$form) {
             throw new \CodeIgniter\Exceptions\PageNotFoundException('Form not found');
@@ -41,7 +41,7 @@ class Submissions extends BaseController
 
     public function view($formId, $submissionId)
     {
-        $form = $this->formModel->find($formId);
+        $form = $this->formModel->findActive($formId);
         $submission = $this->formSubmissionModel->getSubmissionWithForm($submissionId);
         
         if (!$form || !$submission || $submission['form_id'] != $formId) {
@@ -60,7 +60,7 @@ class Submissions extends BaseController
 
     public function export($formId)
     {
-        $form = $this->formModel->find($formId);
+        $form = $this->formModel->findActive($formId);
         
         if (!$form) {
             throw new \CodeIgniter\Exceptions\PageNotFoundException('Form not found');
@@ -79,15 +79,15 @@ class Submissions extends BaseController
 
     public function delete($formId, $submissionId)
     {
-        $form = $this->formModel->find($formId);
-        $submission = $this->formSubmissionModel->find($submissionId);
+        $form = $this->formModel->findActive($formId);
+        $submission = $this->formSubmissionModel->findActive($submissionId);
         
         if (!$form || !$submission || $submission['form_id'] != $formId) {
             throw new \CodeIgniter\Exceptions\PageNotFoundException('Form or submission not found');
         }
 
-        if ($this->request->getMethod() === 'post') {
-            if ($this->formSubmissionModel->delete($submissionId)) {
+        if (strtolower($this->request->getMethod()) === 'post') {
+            if ($this->formSubmissionModel->softDelete($submissionId)) {
                 session()->setFlashdata('success', 'Submission deleted successfully!');
             } else {
                 session()->setFlashdata('error', 'Failed to delete submission. Please try again.');

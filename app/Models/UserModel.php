@@ -10,7 +10,7 @@ class UserModel extends Model
     protected $primaryKey = 'id';
     protected $useAutoIncrement = true;
     protected $returnType = 'array';
-    protected $useSoftDeletes = true;
+    protected $useSoftDeletes = false;
     protected $protectFields = true;
     protected $allowedFields = [
         'username',
@@ -19,7 +19,7 @@ class UserModel extends Model
         'role',
         'created_at',
         'updated_at',
-        'deleted_at'
+        'deleted_flag'
     ];
 
     // Dates
@@ -27,7 +27,6 @@ class UserModel extends Model
     protected $dateFormat = 'datetime';
     protected $createdField = 'created_at';
     protected $updatedField = 'updated_at';
-    protected $deletedField = 'deleted_at';
 
     // Validation
     protected $validationRules = [
@@ -84,5 +83,35 @@ class UserModel extends Model
         }
         
         return false;
+    }
+
+    /**
+     * Soft delete a user by setting deleted_flag to true and deleted_at timestamp
+     */
+    public function softDelete($id)
+    {
+        return $this->update($id, [
+            'deleted_flag' => true,
+            'deleted_at' => date('Y-m-d H:i:s')
+        ]);
+    }
+
+    /**
+     * Restore a soft-deleted user by setting deleted_flag to false and clearing deleted_at
+     */
+    public function restore($id)
+    {
+        return $this->update($id, [
+            'deleted_flag' => false,
+            'deleted_at' => null
+        ]);
+    }
+
+    /**
+     * Find user including soft-deleted ones
+     */
+    public function findWithDeleted($id)
+    {
+        return $this->find($id);
     }
 }

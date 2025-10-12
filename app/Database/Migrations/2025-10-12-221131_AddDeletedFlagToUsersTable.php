@@ -8,11 +8,17 @@ class AddDeletedFlagToUsersTable extends Migration
 {
     public function up()
     {
-        //
+        $this->forge->addColumn('users', [
+            'deleted_flag' => [
+                'type' => 'BOOLEAN',
+                'default' => false,
+                'null' => false,
+            ],
+        ]);
     }
 
     public function down()
     {
-        //
+        $this->forge->dropColumn('users', 'deleted_flag');
     }
 }

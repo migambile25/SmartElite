@@ -201,36 +201,27 @@ class FormFields extends BaseController
 
     public function delete($formId, $fieldId)
     {
-        // Debug: Log the method and parameters
-        log_message('debug', 'Delete method called - Form ID: ' . $formId . ', Field ID: ' . $fieldId . ', Method: ' . $this->request->getMethod());
-        
         $form = $this->formModel->find($formId);
-        $field = $this->formFieldModel->find($fieldId);
-        
-        // Debug: Log what we found
-        log_message('debug', 'Form lookup result: ' . ($form ? 'found (ID: ' . $form['id'] . ')' : 'not found'));
-        log_message('debug', 'Field lookup result: ' . ($field ? 'found (ID: ' . $field['id'] . ', Form ID: ' . $field['form_id'] . ')' : 'not found'));
+        $field = $this->formFieldModel->findActive($fieldId);
         
         // If field not found, check if it's soft-deleted
         if (!$field) {
-            $deletedField = $this->formFieldModel->withDeleted()->find($fieldId);
-            if ($deletedField) {
-                log_message('debug', 'Field found in soft-deleted records: ' . $deletedField['id']);
+            $deletedField = $this->formFieldModel->findWithDeleted($fieldId);
+            if ($deletedField && $deletedField['deleted_flag']) {
                 session()->setFlashdata('error', 'This field has already been deleted.');
                 return redirect()->to('/admin/forms/' . $formId . '/fields');
             }
         }
         
-        if (!$form || !$field || $field['form_id'] != $formId) {
-            log_message('error', 'Form or field not found - Form: ' . ($form ? 'found' : 'not found') . ', Field: ' . ($field ? 'found' : 'not found'));
+        if (!$form || !$field || $field['form_id'] != $formId || ($field['deleted_flag'] ?? false)) {
             throw new \CodeIgniter\Exceptions\PageNotFoundException('Form or field not found');
         }
-
-        if ($this->request->getMethod() === 'post') {
+        
+        if (strtolower($this->request->getMethod()) === 'post') {
             // Debug: Log the deletion attempt
-            log_message('debug', 'Attempting to delete field ID: ' . $fieldId . ' from form ID: ' . $formId);
+            log_message('debug', 'POST method detected, attempting to delete field ID: ' . $fieldId . ' from form ID: ' . $formId);
             
-            $deleteResult = $this->formFieldModel->delete($fieldId);
+            $deleteResult = $this->formFieldModel->softDelete($fieldId);
             log_message('debug', 'Delete result: ' . ($deleteResult ? 'true' : 'false'));
             
             if ($deleteResult) {
@@ -250,6 +241,8 @@ class FormFields extends BaseController
                 log_message('debug', 'Redirecting back to fields list with error');
                 return redirect()->to('/admin/forms/' . $formId . '/fields');
             }
+        } else {
+            log_message('debug', 'Not a POST method, showing delete confirmation page');
         }
 
         $data = [

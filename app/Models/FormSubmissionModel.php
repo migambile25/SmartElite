@@ -10,7 +10,7 @@ class FormSubmissionModel extends Model
     protected $primaryKey = 'id';
     protected $useAutoIncrement = true;
     protected $returnType = 'array';
-    protected $useSoftDeletes = true;
+    protected $useSoftDeletes = false;
     protected $protectFields = true;
     protected $allowedFields = [
         'form_id',
@@ -18,13 +18,12 @@ class FormSubmissionModel extends Model
         'ip_address',
         'user_agent',
         'submitted_at',
-        'deleted_at'
+        'deleted_flag'
     ];
 
     // Dates
     protected $useTimestamps = false; // We use submitted_at instead
     protected $dateFormat = 'datetime';
-    protected $deletedField = 'deleted_at';
 
     // Validation
     protected $validationRules = [
@@ -175,5 +174,35 @@ class FormSubmissionModel extends Model
         }
         
         return $csv;
+    }
+
+    /**
+     * Soft delete a submission by setting deleted_flag to true and deleted_at timestamp
+     */
+    public function softDelete($id)
+    {
+        return $this->update($id, [
+            'deleted_flag' => true,
+            'deleted_at' => date('Y-m-d H:i:s')
+        ]);
+    }
+
+    /**
+     * Restore a soft-deleted submission by setting deleted_flag to false and clearing deleted_at
+     */
+    public function restore($id)
+    {
+        return $this->update($id, [
+            'deleted_flag' => false,
+            'deleted_at' => null
+        ]);
+    }
+
+    /**
+     * Find submission including soft-deleted ones
+     */
+    public function findWithDeleted($id)
+    {
+        return $this->find($id);
     }
 }

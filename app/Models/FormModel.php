@@ -10,8 +10,7 @@ class FormModel extends Model
     protected $primaryKey = 'id';
     protected $useAutoIncrement = true;
     protected $returnType = 'array';
-    protected $useSoftDeletes = true;
-    protected $deletedField = 'deleted_at';
+    protected $useSoftDeletes = false;
     protected $protectFields = true;
     protected $allowedFields = [
         'title',
@@ -22,7 +21,7 @@ class FormModel extends Model
         'created_by',
         'created_at',
         'updated_at',
-        'deleted_at'
+        'deleted_flag'
     ];
 
     // Dates
@@ -144,5 +143,35 @@ class FormModel extends Model
                                        ->findAll();
 
         return $form;
+    }
+
+    /**
+     * Soft delete a form by setting deleted_flag to true and deleted_at timestamp
+     */
+    public function softDelete($id)
+    {
+        return $this->update($id, [
+            'deleted_flag' => true,
+            'deleted_at' => date('Y-m-d H:i:s')
+        ]);
+    }
+
+    /**
+     * Restore a soft-deleted form by setting deleted_flag to false and clearing deleted_at
+     */
+    public function restore($id)
+    {
+        return $this->update($id, [
+            'deleted_flag' => false,
+            'deleted_at' => null
+        ]);
+    }
+
+    /**
+     * Find form including soft-deleted ones
+     */
+    public function findWithDeleted($id)
+    {
+        return $this->find($id);
     }
 }

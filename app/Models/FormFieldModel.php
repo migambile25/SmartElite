@@ -10,8 +10,7 @@ class FormFieldModel extends Model
     protected $primaryKey = 'id';
     protected $useAutoIncrement = true;
     protected $returnType = 'array';
-    protected $useSoftDeletes = true;
-    protected $deletedField = 'deleted_at';
+    protected $useSoftDeletes = false;
     protected $protectFields = true;
     protected $allowedFields = [
         'form_id',
@@ -24,7 +23,7 @@ class FormFieldModel extends Model
         'validation_rules',
         'created_at',
         'updated_at',
-        'deleted_at'
+        'deleted_flag'
     ];
 
     // Dates
@@ -173,5 +172,66 @@ class FormFieldModel extends Model
     public function setFieldOptions($fieldId, $options)
     {
         return $this->update($fieldId, ['field_options' => json_encode($options)]);
+    }
+
+    /**
+     * Soft delete a field by setting deleted_flag to true and deleted_at timestamp
+     */
+    public function softDelete($id)
+    {
+        return $this->update($id, [
+            'deleted_flag' => true,
+            'deleted_at' => date('Y-m-d H:i:s')
+        ]);
+    }
+
+    /**
+     * Restore a soft-deleted field by setting deleted_flag to false and clearing deleted_at
+     */
+    public function restore($id)
+    {
+        return $this->update($id, [
+            'deleted_flag' => false,
+            'deleted_at' => null
+        ]);
+    }
+
+    /**
+     * Find field including soft-deleted ones
+     */
+    public function findWithDeleted($id)
+    {
+        return parent::find($id);
+    }
+
+    /**
+     * Get all fields including soft-deleted ones
+     */
+    public function findAllWithDeleted($formId = null)
+    {
+        $query = $this;
+        if ($formId) {
+            $query = $query->where('form_id', $formId);
+        }
+        return $query->orderBy('field_order', 'ASC')->findAll();
+    }
+
+    /**
+     * Get active (non-deleted) fields only
+     */
+    public function findActive($id = null)
+    {
+        if ($id === null) {
+            return $this->where('deleted_flag', false)->findAll();
+        }
+        return $this->where('deleted_flag', false)->where('id', $id)->first();
+    }
+
+    /**
+     * Get all active (non-deleted) fields
+     */
+    public function findAllActive(?int $limit = null, int $offset = 0)
+    {
+        return $this->where('deleted_flag', false)->findAll($limit, $offset);
     }
 }

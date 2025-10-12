@@ -17,12 +17,14 @@ class FormSubmissionModel extends Model
         'submission_data',
         'ip_address',
         'user_agent',
-        'submitted_at'
+        'submitted_at',
+        'deleted_at'
     ];
 
     // Dates
     protected $useTimestamps = false; // We use submitted_at instead
     protected $dateFormat = 'datetime';
+    protected $deletedField = 'deleted_at';
 
     // Validation
     protected $validationRules = [

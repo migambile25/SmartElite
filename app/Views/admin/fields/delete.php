@@ -25,7 +25,7 @@
             <div class="card-body">
                 <div class="alert alert-warning">
                     <i class="bi bi-exclamation-triangle me-2"></i>
-                    <strong>Warning:</strong> This action cannot be undone. Deleting this field will permanently remove it from the form and any existing submissions will lose this field's data.
+                    <strong>Warning:</strong> This action will remove the field from the form. Users will no longer see this field when filling out the form.
                 </div>
 
                 <h6>Field Details:</h6>
@@ -71,7 +71,7 @@
                     <ul class="text-muted">
                         <li>This field will be removed from the form</li>
                         <li>Users will no longer see this field when filling out the form</li>
-                        <li>Existing submissions will retain this field's data, but it won't be displayed in the admin panel</li>
+                        <li>Existing submissions will retain this field's data</li>
                         <li>Form validation will no longer check this field</li>
                     </ul>
                 </div>

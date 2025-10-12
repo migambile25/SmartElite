@@ -18,7 +18,8 @@ class UserModel extends Model
         'password',
         'role',
         'created_at',
-        'updated_at'
+        'updated_at',
+        'deleted_at'
     ];
 
     // Dates

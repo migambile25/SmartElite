@@ -23,11 +23,17 @@
                 </h5>
             </div>
             <div class="card-body">
-                <form method="POST" action="<?= base_url('admin/forms/' . $form['id'] . '/fields/bulk-store') ?>" id="bulkFieldsForm">
+                <form method="POST" action="<?= base_url('admin/forms/' . $form['id'] . '/fields/bulk-store') ?>" id="bulkFieldsForm" onsubmit="return validateAndCleanForm()">
                     <?= csrf_field() ?>
                     
                     <div id="fields-container">
                         <!-- Field templates will be added here -->
+                    </div>
+                    
+                    <div id="emptyFieldsWarning" class="alert alert-warning mt-3" style="display: none;">
+                        <i class="bi bi-exclamation-triangle me-2"></i>
+                        <strong>Empty fields detected!</strong> You have some empty field templates. 
+                        Either fill them out or remove them before submitting.
                     </div>
                     
                     <div class="d-flex justify-content-between mt-4">
@@ -37,6 +43,9 @@
                             </button>
                             <button type="button" class="btn btn-outline-info" id="addCommonFieldsBtn">
                                 <i class="bi bi-lightning me-2"></i>Add Common Fields
+                            </button>
+                            <button type="button" class="btn btn-outline-warning" id="removeEmptyBtn" style="display: none;">
+                                <i class="bi bi-trash me-2"></i>Remove Empty Fields
                             </button>
                         </div>
                         <div>
@@ -108,13 +117,14 @@
             <div class="row">
                 <div class="col-md-6">
                     <div class="mb-3">
-                        <label class="form-label">Field Name <span class="text-danger">*</span></label>
+                        <label class="form-label">Field Name <small class="text-muted">(Optional)</small></label>
                         <input type="text" 
                                class="form-control field-name" 
                                name="fields[INDEX][field_name]" 
-                               placeholder="e.g., first_name"
-                               required>
-                        <div class="form-text">Internal field name (letters, numbers, dashes, underscores only)</div>
+                               placeholder="Auto-generated from label">
+                        <div class="form-text">
+                            <span class="field-name-preview text-muted">Will be auto-generated from the field label</span>
+                        </div>
                     </div>
                 </div>
                 <div class="col-md-6">
@@ -236,42 +246,36 @@ let fieldIndex = 0;
 // Common field templates
 const commonFields = [
     {
-        name: 'first_name',
         label: 'First Name',
         type: 'text',
         required: true,
         validation: 'min_length[2]|max_length[50]'
     },
     {
-        name: 'last_name',
         label: 'Last Name',
         type: 'text',
         required: true,
         validation: 'min_length[2]|max_length[50]'
     },
     {
-        name: 'email',
         label: 'Email Address',
         type: 'email',
         required: true,
         validation: 'valid_email'
     },
     {
-        name: 'phone',
         label: 'Phone Number',
         type: 'tel',
         required: true,
         validation: 'regex_match[/^[\+]?[1-9][\d]{0,15}$/]'
     },
     {
-        name: 'date_of_birth',
         label: 'Date of Birth',
         type: 'date',
         required: true,
         validation: 'valid_date'
     },
     {
-        name: 'address',
         label: 'Address',
         type: 'textarea',
         required: false,
@@ -298,6 +302,7 @@ document.addEventListener('DOMContentLoaded', function() {
         if (e.target.closest('.remove-field')) {
             e.target.closest('.field-item').remove();
             updateFieldNumbers();
+            checkForEmptyFields();
         }
     });
     
@@ -306,6 +311,19 @@ document.addEventListener('DOMContentLoaded', function() {
         if (e.target.classList.contains('field-type')) {
             toggleFieldOptions(e.target);
         }
+    });
+    
+    // Field label change handler for auto-generating field names
+    container.addEventListener('input', function(e) {
+        if (e.target.classList.contains('field-label')) {
+            updateFieldNamePreview(e.target);
+        }
+        checkForEmptyFields();
+    });
+    
+    // Remove empty fields button
+    document.getElementById('removeEmptyBtn').addEventListener('click', function() {
+        removeEmptyFields();
     });
 });
 
@@ -332,6 +350,7 @@ function addField() {
     document.getElementById('fields-container').appendChild(clone);
     
     fieldIndex++;
+    checkForEmptyFields();
 }
 
 function addCommonFields() {
@@ -339,11 +358,14 @@ function addCommonFields() {
         addField();
         
         const lastField = document.querySelector('.field-item:last-child');
-        lastField.querySelector('.field-name').value = field.name;
+        // Don't set field name - let it be auto-generated
         lastField.querySelector('.field-label').value = field.label;
         lastField.querySelector('.field-type').value = field.type;
         lastField.querySelector('.field-validation').value = field.validation;
         lastField.querySelector('.field-required').checked = field.required;
+        
+        // Trigger field name preview update
+        updateFieldNamePreview(lastField.querySelector('.field-label'));
         
         // Trigger field type change to show/hide options
         toggleFieldOptions(lastField.querySelector('.field-type'));
@@ -366,6 +388,129 @@ function updateFieldNumbers() {
     document.querySelectorAll('.field-item').forEach((item, index) => {
         item.querySelector('.field-number').textContent = index + 1;
     });
+}
+
+function updateFieldNamePreview(labelInput) {
+    const fieldItem = labelInput.closest('.field-item');
+    const fieldNameInput = fieldItem.querySelector('.field-name');
+    const preview = fieldItem.querySelector('.field-name-preview');
+    const label = labelInput.value;
+    
+    if (label && !fieldNameInput.value) {
+        // Generate field name from label
+        const fieldName = label.toLowerCase()
+            .replace(/[^a-z0-9\s]/g, '')
+            .replace(/\s+/g, '_')
+            .trim();
+        
+        preview.textContent = `Will be: ${fieldName}`;
+        preview.className = 'field-name-preview text-success';
+    } else if (!label) {
+        preview.textContent = 'Will be auto-generated from the field label';
+        preview.className = 'field-name-preview text-muted';
+    }
+}
+
+function validateAndCleanForm() {
+    const fields = document.querySelectorAll('.field-item');
+    let hasValidFields = false;
+    let emptyFields = [];
+    let incompleteFields = [];
+    
+    fields.forEach((field, index) => {
+        const label = field.querySelector('.field-label').value.trim();
+        const type = field.querySelector('.field-type').value;
+        
+        if (label && type) {
+            hasValidFields = true;
+        } else if (!label && !type) {
+            // Completely empty field - mark for removal
+            emptyFields.push(field);
+        } else if (!label || !type) {
+            // Partially filled field - mark for error
+            incompleteFields.push({field, index: index + 1, label, type});
+        }
+    });
+    
+    // Show errors for incomplete fields
+    if (incompleteFields.length > 0) {
+        const errorMsg = incompleteFields.map(f => 
+            `Field ${f.index}: ${!f.label ? 'Missing label' : 'Missing type'}`
+        ).join('\n');
+        alert(`Please complete the following fields:\n\n${errorMsg}\n\nOr remove them if not needed.`);
+        return false;
+    }
+    
+    if (!hasValidFields) {
+        alert('Please add at least one complete field with both label and type.');
+        return false;
+    }
+    
+    // Remove empty fields before submission
+    emptyFields.forEach(field => {
+        field.remove();
+    });
+    
+    // Update field numbers after removal
+    updateFieldNumbers();
+    
+    return true;
+}
+
+function checkForEmptyFields() {
+    const fields = document.querySelectorAll('.field-item');
+    let hasEmptyFields = false;
+    
+    fields.forEach(field => {
+        const label = field.querySelector('.field-label').value.trim();
+        const type = field.querySelector('.field-type').value;
+        
+        if (!label && !type) {
+            hasEmptyFields = true;
+        }
+    });
+    
+    const warning = document.getElementById('emptyFieldsWarning');
+    const removeBtn = document.getElementById('removeEmptyBtn');
+    
+    if (hasEmptyFields) {
+        warning.style.display = 'block';
+        removeBtn.style.display = 'inline-block';
+    } else {
+        warning.style.display = 'none';
+        removeBtn.style.display = 'none';
+    }
+}
+
+function removeEmptyFields() {
+    const fields = document.querySelectorAll('.field-item');
+    let removedCount = 0;
+    
+    fields.forEach(field => {
+        const label = field.querySelector('.field-label').value.trim();
+        const type = field.querySelector('.field-type').value;
+        
+        if (!label && !type) {
+            field.remove();
+            removedCount++;
+        }
+    });
+    
+    updateFieldNumbers();
+    checkForEmptyFields();
+    
+    if (removedCount > 0) {
+        // Show a brief success message
+        const btn = document.getElementById('removeEmptyBtn');
+        const originalText = btn.innerHTML;
+        btn.innerHTML = '<i class="bi bi-check me-2"></i>Removed!';
+        btn.className = 'btn btn-success';
+        
+        setTimeout(() => {
+            btn.innerHTML = originalText;
+            btn.className = 'btn btn-outline-warning';
+        }, 2000);
+    }
 }
 </script>
 <?= $this->endSection() ?>

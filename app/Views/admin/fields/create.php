@@ -29,20 +29,21 @@
                     <div class="row">
                         <div class="col-md-6">
                             <div class="mb-3">
-                                <label for="field_name" class="form-label">Field Name <span class="text-danger">*</span></label>
+                                <label for="field_name" class="form-label">Field Name <small class="text-muted">(Optional)</small></label>
                                 <input type="text" 
-                                       class="form-control <?= $validation->hasError('field_name') ? 'is-invalid' : '' ?>" 
+                                       class="form-control field-name <?= $validation->hasError('field_name') ? 'is-invalid' : '' ?>" 
                                        id="field_name" 
                                        name="field_name" 
                                        value="<?= old('field_name') ?>"
-                                       placeholder="e.g., first_name"
-                                       required>
+                                       placeholder="Auto-generated from label">
                                 <?php if ($validation->hasError('field_name')): ?>
                                     <div class="invalid-feedback">
                                         <?= $validation->getError('field_name') ?>
                                     </div>
                                 <?php endif; ?>
-                                <div class="form-text">Internal field name (letters, numbers, dashes, underscores only)</div>
+                                <div class="form-text">
+                                    <span id="field_name_preview" class="text-muted">Will be auto-generated from the field label</span>
+                                </div>
                             </div>
                         </div>
                         
@@ -50,7 +51,7 @@
                             <div class="mb-3">
                                 <label for="field_label" class="form-label">Field Label <span class="text-danger">*</span></label>
                                 <input type="text" 
-                                       class="form-control <?= $validation->hasError('field_label') ? 'is-invalid' : '' ?>" 
+                                       class="form-control field-label <?= $validation->hasError('field_label') ? 'is-invalid' : '' ?>" 
                                        id="field_label" 
                                        name="field_label" 
                                        value="<?= old('field_label') ?>"
@@ -214,7 +215,34 @@ document.getElementById('field_type').addEventListener('change', function() {
     }
 });
 
+// Field name auto-generation
+document.getElementById('field_label').addEventListener('input', function() {
+    const label = this.value;
+    const fieldNameInput = document.getElementById('field_name');
+    const preview = document.getElementById('field_name_preview');
+    
+    if (label && !fieldNameInput.value) {
+        // Generate field name from label
+        const fieldName = label.toLowerCase()
+            .replace(/[^a-z0-9\s]/g, '')
+            .replace(/\s+/g, '_')
+            .trim();
+        
+        preview.textContent = `Will be: ${fieldName}`;
+        preview.className = 'text-success';
+    } else if (!label) {
+        preview.textContent = 'Will be auto-generated from the field label';
+        preview.className = 'text-muted';
+    }
+});
+
 // Trigger change event on page load
 document.getElementById('field_type').dispatchEvent(new Event('change'));
+
+// Trigger field name preview update if there's already a label
+const labelInput = document.getElementById('field_label');
+if (labelInput.value.trim()) {
+    labelInput.dispatchEvent(new Event('input'));
+}
 </script>
 <?= $this->endSection() ?>

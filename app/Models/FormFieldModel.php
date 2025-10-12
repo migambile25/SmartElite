@@ -22,7 +22,8 @@ class FormFieldModel extends Model
         'field_order',
         'validation_rules',
         'created_at',
-        'updated_at'
+        'updated_at',
+        'deleted_at'
     ];
 
     // Dates
@@ -35,7 +36,7 @@ class FormFieldModel extends Model
     // Validation
     protected $validationRules = [
         'form_id' => 'required|integer',
-        'field_name' => 'required|min_length[2]|max_length[255]|alpha_dash',
+        'field_name' => 'permit_empty|min_length[2]|max_length[255]|alpha_dash',
         'field_label' => 'required|min_length[2]|max_length[255]',
         'field_type' => 'required|in_list[text,email,tel,number,date,textarea,select,radio,checkbox,file]',
         'field_options' => 'permit_empty',
@@ -50,7 +51,6 @@ class FormFieldModel extends Model
             'integer' => 'Form ID must be a valid integer'
         ],
         'field_name' => [
-            'required' => 'Field name is required',
             'min_length' => 'Field name must be at least 2 characters long',
             'max_length' => 'Field name cannot exceed 255 characters',
             'alpha_dash' => 'Field name can only contain letters, numbers, dashes and underscores'
@@ -71,8 +71,8 @@ class FormFieldModel extends Model
 
     // Callbacks
     protected $allowCallbacks = true;
-    protected $beforeInsert = ['setFieldOrder', 'processFieldOptions'];
-    protected $beforeUpdate = ['processFieldOptions'];
+    protected $beforeInsert = ['setFieldOrder', 'processFieldOptions', 'generateFieldName'];
+    protected $beforeUpdate = ['processFieldOptions', 'generateFieldName'];
 
     protected function setFieldOrder(array $data)
     {
@@ -100,6 +100,50 @@ class FormFieldModel extends Model
             }
         }
         return $data;
+    }
+
+    protected function generateFieldName(array $data)
+    {
+        // Debug: Log the callback execution
+        log_message('debug', 'generateFieldName callback called with data: ' . json_encode($data));
+        
+        // If field_name is empty or not provided, generate it from field_label
+        if (empty($data['data']['field_name']) && !empty($data['data']['field_label'])) {
+            $excludeId = $data['data']['id'] ?? null;
+            $generatedName = $this->createFieldName($data['data']['field_label'], $data['data']['form_id'], $excludeId);
+            $data['data']['field_name'] = $generatedName;
+            log_message('debug', 'Generated field name: ' . $generatedName);
+        }
+        return $data;
+    }
+
+    private function createFieldName($label, $formId, $excludeId = null)
+    {
+        // Convert label to field name: "First Name" -> "first_name"
+        $fieldName = strtolower(trim(preg_replace('/[^A-Za-z0-9\s]+/', '', $label)));
+        $fieldName = preg_replace('/\s+/', '_', $fieldName);
+        $fieldName = trim($fieldName, '_');
+        
+        // Ensure uniqueness within the form
+        $originalFieldName = $fieldName;
+        $counter = 1;
+        
+        $query = $this->where('form_id', $formId)->where('field_name', $fieldName);
+        if ($excludeId) {
+            $query->where('id !=', $excludeId);
+        }
+        
+        while ($query->first()) {
+            $fieldName = $originalFieldName . '_' . $counter;
+            $counter++;
+            
+            $query = $this->where('form_id', $formId)->where('field_name', $fieldName);
+            if ($excludeId) {
+                $query->where('id !=', $excludeId);
+            }
+        }
+        
+        return $fieldName;
     }
 
     public function getFieldsByFormId($formId)

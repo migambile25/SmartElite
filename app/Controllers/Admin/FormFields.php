@@ -66,14 +66,13 @@ class FormFields extends BaseController
         $validation = \Config\Services::validation();
         
         $validation->setRules([
-            'field_name' => 'required|min_length[2]|max_length[255]|alpha_dash',
+            'field_name' => 'permit_empty|min_length[2]|max_length[255]|alpha_dash',
             'field_label' => 'required|min_length[2]|max_length[255]',
             'field_type' => 'required|in_list[text,email,tel,number,date,textarea,select,radio,checkbox,file]',
             'is_required' => 'permit_empty',
             'field_order' => 'permit_empty|integer'
         ], [
             'field_name' => [
-                'required' => 'Field name is required',
                 'min_length' => 'Field name must be at least 2 characters long',
                 'max_length' => 'Field name cannot exceed 255 characters',
                 'alpha_dash' => 'Field name can only contain letters, numbers, dashes and underscores'
@@ -104,11 +103,21 @@ class FormFields extends BaseController
             'validation_rules' => $this->request->getPost('validation_rules')
         ];
 
+        // Debug: Log the data being inserted
+        log_message('debug', 'Single field creation data: ' . json_encode($data));
+
         if ($this->formFieldModel->insert($data)) {
             session()->setFlashdata('success', 'Field created successfully!');
             return redirect()->to('/admin/forms/' . $formId . '/fields');
         } else {
-            session()->setFlashdata('error', 'Failed to create field. Please try again.');
+            // Get model validation errors for debugging
+            $errors = $this->formFieldModel->errors();
+            $errorMessage = 'Failed to create field. Please try again.';
+            if (!empty($errors)) {
+                $errorMessage .= ' Errors: ' . implode(', ', $errors);
+            }
+            log_message('error', 'Single field creation failed: ' . $errorMessage);
+            session()->setFlashdata('error', $errorMessage);
             return redirect()->back()->withInput();
         }
     }
@@ -145,14 +154,13 @@ class FormFields extends BaseController
         $validation = \Config\Services::validation();
         
         $validation->setRules([
-            'field_name' => 'required|min_length[2]|max_length[255]|alpha_dash',
+            'field_name' => 'permit_empty|min_length[2]|max_length[255]|alpha_dash',
             'field_label' => 'required|min_length[2]|max_length[255]',
             'field_type' => 'required|in_list[text,email,tel,number,date,textarea,select,radio,checkbox,file]',
             'is_required' => 'permit_empty',
             'field_order' => 'permit_empty|integer'
         ], [
             'field_name' => [
-                'required' => 'Field name is required',
                 'min_length' => 'Field name must be at least 2 characters long',
                 'max_length' => 'Field name cannot exceed 255 characters',
                 'alpha_dash' => 'Field name can only contain letters, numbers, dashes and underscores'
@@ -201,10 +209,21 @@ class FormFields extends BaseController
         }
 
         if ($this->request->getMethod() === 'post') {
+            // Debug: Log the deletion attempt
+            log_message('debug', 'Attempting to delete field ID: ' . $fieldId . ' from form ID: ' . $formId);
+            
             if ($this->formFieldModel->delete($fieldId)) {
+                log_message('debug', 'Field soft deleted successfully');
                 session()->setFlashdata('success', 'Field deleted successfully!');
             } else {
-                session()->setFlashdata('error', 'Failed to delete field. Please try again.');
+                // Get model errors for debugging
+                $errors = $this->formFieldModel->errors();
+                $errorMessage = 'Failed to delete field. Please try again.';
+                if (!empty($errors)) {
+                    $errorMessage .= ' Errors: ' . implode(', ', $errors);
+                }
+                log_message('error', 'Field deletion failed: ' . $errorMessage);
+                session()->setFlashdata('error', $errorMessage);
             }
             return redirect()->to('/admin/forms/' . $formId . '/fields');
         }
@@ -273,20 +292,40 @@ class FormFields extends BaseController
             return redirect()->back();
         }
 
+        // Filter out empty fields (fields without labels)
+        $validFields = [];
+        foreach ($fields as $index => $field) {
+            if (!empty(trim($field['field_label'] ?? ''))) {
+                $validFields[] = $field;
+            }
+        }
+        
+        // Debug: Log the fields being processed
+        log_message('debug', 'Total fields received: ' . count($fields));
+        log_message('debug', 'Valid fields after filtering: ' . count($validFields));
+        log_message('debug', 'Raw fields data: ' . json_encode($fields));
+
+        if (empty($validFields)) {
+            session()->setFlashdata('error', 'Please provide at least one field with a label.');
+            return redirect()->back();
+        }
+
         $validation = \Config\Services::validation();
         $errors = [];
         $successCount = 0;
 
-        foreach ($fields as $index => $field) {
+        foreach ($validFields as $index => $field) {
+            // Debug: Log each field being validated
+            log_message('debug', 'Validating field ' . ($index + 1) . ': ' . json_encode($field));
+            
             $validation->setRules([
-                'field_name' => 'required|min_length[2]|max_length[255]|alpha_dash',
+                'field_name' => 'permit_empty|min_length[2]|max_length[255]|alpha_dash',
                 'field_label' => 'required|min_length[2]|max_length[255]',
                 'field_type' => 'required|in_list[text,email,tel,number,date,textarea,select,radio,checkbox,file]',
                 'is_required' => 'permit_empty',
                 'field_order' => 'permit_empty|integer'
             ], [
                 'field_name' => [
-                    'required' => "Field name is required for field " . ($index + 1),
                     'min_length' => "Field name must be at least 2 characters long for field " . ($index + 1),
                     'max_length' => "Field name cannot exceed 255 characters for field " . ($index + 1),
                     'alpha_dash' => "Field name can only contain letters, numbers, dashes and underscores for field " . ($index + 1)
@@ -302,8 +341,10 @@ class FormFields extends BaseController
                 ]
             ]);
 
-            if (!$validation->withRequest($this->request)->run()) {
-                $errors = array_merge($errors, $validation->getErrors());
+            // Validate the individual field data
+            if (!$validation->run($field)) {
+                $fieldErrors = $validation->getErrors();
+                $errors = array_merge($errors, $fieldErrors);
             }
         }
 
@@ -312,8 +353,8 @@ class FormFields extends BaseController
             return redirect()->back()->withInput();
         }
 
-        // Process each field
-        foreach ($fields as $field) {
+        // Process each valid field
+        foreach ($validFields as $field) {
             $data = [
                 'form_id' => $formId,
                 'field_name' => $field['field_name'],

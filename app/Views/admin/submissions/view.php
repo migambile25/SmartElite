@@ -3,6 +3,33 @@
 <?= $this->section('content') ?>
 <?php $showSidebar = true; ?>
 
+<?php
+// Helper function for time ago
+if (!function_exists('timeAgo')) {
+    function timeAgo($datetime) {
+        $time = time() - strtotime($datetime);
+        
+        if ($time < 60) return 'just now';
+        if ($time < 3600) return floor($time/60) . ' minutes ago';
+        if ($time < 86400) return floor($time/3600) . ' hours ago';
+        if ($time < 2592000) return floor($time/86400) . ' days ago';
+        if ($time < 31536000) return floor($time/2592000) . ' months ago';
+        return floor($time/31536000) . ' years ago';
+    }
+}
+
+// Helper function to get submission data count
+if (!function_exists('getSubmissionDataCount')) {
+    function getSubmissionDataCount($submissionData) {
+        if (is_string($submissionData)) {
+            $decoded = json_decode($submissionData, true);
+            return is_array($decoded) ? count($decoded) : 0;
+        }
+        return is_array($submissionData) ? count($submissionData) : 0;
+    }
+}
+?>
+
 <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
     <h1 class="h2">
         <i class="bi bi-eye me-2"></i>View Submission - <?= esc($form['title']) ?>
@@ -54,8 +81,13 @@
                             </tr>
                         </thead>
                         <tbody>
-                            <?php if (!empty($submission['submission_data'])): ?>
-                                <?php foreach ($submission['submission_data'] as $fieldName => $value): ?>
+                            <?php 
+                            $submissionData = $submission['submission_data'] ?? '';
+                            if (is_string($submissionData)) {
+                                $submissionData = json_decode($submissionData, true) ?? [];
+                            }
+                            if (!empty($submissionData) && is_array($submissionData)): ?>
+                                <?php foreach ($submissionData as $fieldName => $value): ?>
                                 <tr>
                                     <td>
                                         <strong><?= esc(ucwords(str_replace('_', ' ', $fieldName))) ?></strong>
@@ -124,9 +156,9 @@
 
                 <h6>Quick Stats</h6>
                 <p class="small text-muted">
-                    <strong>Total Fields:</strong> <?= count($submission['submission_data'] ?? []) ?><br>
+                    <strong>Total Fields:</strong> <?= getSubmissionDataCount($submission['submission_data'] ?? '') ?><br>
                     <strong>Submission Time:</strong> <?= date('M j, Y', strtotime($submission['submitted_at'])) ?><br>
-                    <strong>Time Ago:</strong> <?= $this->timeAgo($submission['submitted_at']) ?>
+                    <strong>Time Ago:</strong> <?= timeAgo($submission['submitted_at']) ?>
                 </p>
 
                 <hr>
@@ -156,19 +188,4 @@
     </div>
 </div>
 
-<?php
-// Helper function for time ago
-if (!function_exists('timeAgo')) {
-    function timeAgo($datetime) {
-        $time = time() - strtotime($datetime);
-        
-        if ($time < 60) return 'just now';
-        if ($time < 3600) return floor($time/60) . ' minutes ago';
-        if ($time < 86400) return floor($time/3600) . ' hours ago';
-        if ($time < 2592000) return floor($time/86400) . ' days ago';
-        if ($time < 31536000) return floor($time/2592000) . ' months ago';
-        return floor($time/31536000) . ' years ago';
-    }
-}
-?>
 <?= $this->endSection() ?>

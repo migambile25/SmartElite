@@ -3,6 +3,33 @@
 <?= $this->section('content') ?>
 <?php $showSidebar = true; ?>
 
+<?php
+// Helper function for time ago
+if (!function_exists('timeAgo')) {
+    function timeAgo($datetime) {
+        $time = time() - strtotime($datetime);
+        
+        if ($time < 60) return 'just now';
+        if ($time < 3600) return floor($time/60) . ' minutes ago';
+        if ($time < 86400) return floor($time/3600) . ' hours ago';
+        if ($time < 2592000) return floor($time/86400) . ' days ago';
+        if ($time < 31536000) return floor($time/2592000) . ' months ago';
+        return floor($time/31536000) . ' years ago';
+    }
+}
+
+// Helper function to get submission data count
+if (!function_exists('getSubmissionDataCount')) {
+    function getSubmissionDataCount($submissionData) {
+        if (is_string($submissionData)) {
+            $decoded = json_decode($submissionData, true);
+            return is_array($decoded) ? count($decoded) : 0;
+        }
+        return is_array($submissionData) ? count($submissionData) : 0;
+    }
+}
+?>
+
 <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
     <h1 class="h2">
         <i class="bi bi-trash me-2"></i>Delete Submission - <?= esc($form['title']) ?>
@@ -39,8 +66,8 @@
                             </div>
                             <div class="col-md-6">
                                 <p><strong>IP Address:</strong> <code><?= esc($submission['ip_address']) ?></code></p>
-                                <p><strong>Time Ago:</strong> <?= $this->timeAgo($submission['submitted_at']) ?></p>
-                                <p><strong>Data Fields:</strong> <?= count($submission['submission_data'] ?? []) ?> fields</p>
+                                <p><strong>Time Ago:</strong> <?= timeAgo($submission['submitted_at']) ?></p>
+                                <p><strong>Data Fields:</strong> <?= getSubmissionDataCount($submission['submission_data'] ?? '') ?> fields</p>
                             </div>
                         </div>
                     </div>
@@ -50,9 +77,14 @@
                     <h6>Sample of Submitted Data:</h6>
                     <div class="card bg-light">
                         <div class="card-body">
-                            <?php if (!empty($submission['submission_data'])): ?>
+                            <?php 
+                            $submissionData = $submission['submission_data'] ?? '';
+                            if (is_string($submissionData)) {
+                                $submissionData = json_decode($submissionData, true) ?? [];
+                            }
+                            if (!empty($submissionData) && is_array($submissionData)): ?>
                                 <?php $count = 0; ?>
-                                <?php foreach ($submission['submission_data'] as $fieldName => $value): ?>
+                                <?php foreach ($submissionData as $fieldName => $value): ?>
                                     <?php if ($count < 5): ?>
                                         <p class="small mb-1">
                                             <strong><?= esc(ucwords(str_replace('_', ' ', $fieldName))) ?>:</strong>
@@ -65,9 +97,9 @@
                                         <?php $count++; ?>
                                     <?php endif; ?>
                                 <?php endforeach; ?>
-                                <?php if (count($submission['submission_data']) > 5): ?>
+                                <?php if (count($submissionData) > 5): ?>
                                     <p class="small text-muted">
-                                        ... and <?= count($submission['submission_data']) - 5 ?> more fields
+                                        ... and <?= count($submissionData) - 5 ?> more fields
                                     </p>
                                 <?php endif; ?>
                             <?php else: ?>
@@ -104,19 +136,4 @@
     </div>
 </div>
 
-<?php
-// Helper function for time ago
-if (!function_exists('timeAgo')) {
-    function timeAgo($datetime) {
-        $time = time() - strtotime($datetime);
-        
-        if ($time < 60) return 'just now';
-        if ($time < 3600) return floor($time/60) . ' minutes ago';
-        if ($time < 86400) return floor($time/3600) . ' hours ago';
-        if ($time < 2592000) return floor($time/86400) . ' days ago';
-        if ($time < 31536000) return floor($time/2592000) . ' months ago';
-        return floor($time/31536000) . ' years ago';
-    }
-}
-?>
 <?= $this->endSection() ?>

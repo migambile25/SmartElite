@@ -259,45 +259,47 @@
     box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2);
 }
 
-/* Hero Logo with Apple-Style Glass Effect */
+/* Enhanced Hero Logo with Dramatic Glass Effect */
 .hero-logo {
-    background: rgba(255, 255, 255, 0.1);
-    backdrop-filter: blur(20px);
-    -webkit-backdrop-filter: blur(20px);
-    border: 1px solid rgba(255, 255, 255, 0.2);
-    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
-    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    background: rgba(255, 255, 255, 0.05);
+    backdrop-filter: blur(40px);
+    -webkit-backdrop-filter: blur(40px);
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    box-shadow: 0 16px 64px rgba(0, 0, 0, 0.15);
+    transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 .hero-logo:hover {
-    transform: translateY(-4px) scale(1.02);
-    box-shadow: 0 16px 48px rgba(0, 0, 0, 0.15);
-    background: rgba(255, 255, 255, 0.15);
-    backdrop-filter: blur(25px);
-    -webkit-backdrop-filter: blur(25px);
+    transform: translateY(-8px) scale(1.03);
+    box-shadow: 0 24px 80px rgba(0, 0, 0, 0.2);
+    background: rgba(255, 255, 255, 0.12);
+    backdrop-filter: blur(60px);
+    -webkit-backdrop-filter: blur(60px);
 }
 
-/* About Section Icons */
+/* Enhanced About Section Icons with Dramatic Glass Effects */
 .about-icon {
     display: flex;
     justify-content: center;
     align-items: center;
-    width: 80px;
-    height: 80px;
+    width: 90px;
+    height: 90px;
     margin: 0 auto;
-    background: rgba(255, 255, 255, 0.1);
-    backdrop-filter: blur(10px);
-    -webkit-backdrop-filter: blur(10px);
-    border: 1px solid rgba(255, 255, 255, 0.2);
-    border-radius: 20px;
-    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
-    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    background: rgba(255, 255, 255, 0.08);
+    backdrop-filter: blur(35px);
+    -webkit-backdrop-filter: blur(35px);
+    border: 1px solid rgba(255, 255, 255, 0.18);
+    border-radius: 24px;
+    box-shadow: 0 12px 48px rgba(0, 0, 0, 0.15);
+    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 .about-icon:hover {
-    transform: translateY(-2px) scale(1.05);
-    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
+    transform: translateY(-6px) scale(1.08);
+    box-shadow: 0 20px 64px rgba(0, 0, 0, 0.2);
     background: rgba(255, 255, 255, 0.15);
+    backdrop-filter: blur(50px);
+    -webkit-backdrop-filter: blur(50px);
 }
 
 .min-vh-50 {

@@ -318,24 +318,24 @@
     .mobile-form-control {
         font-size: 16px; /* Prevents zoom on iOS */
         padding: 0.75rem;
-        border-radius: 12px;
-        min-height: 48px; /* Touch-friendly minimum height */
-        background: rgba(255, 255, 255, 0.6);
-        backdrop-filter: blur(15px);
-        -webkit-backdrop-filter: blur(15px);
-        border: 2px solid rgba(255, 255, 255, 0.2);
-        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-        box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08);
+        border-radius: 16px;
+        min-height: 52px; /* Touch-friendly minimum height */
+        background: rgba(255, 255, 255, 0.08);
+        backdrop-filter: blur(35px);
+        -webkit-backdrop-filter: blur(35px);
+        border: 2px solid rgba(255, 255, 255, 0.15);
+        transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        box-shadow: 0 8px 32px rgba(0, 0, 0, 0.12);
     }
     
     .mobile-form-control:focus {
         border-color: var(--smartelite-primary);
-        box-shadow: 0 0 0 4px rgba(0, 166, 82, 0.25), 0 8px 32px rgba(0, 0, 0, 0.15);
-        background: rgba(255, 255, 255, 0.85);
-        backdrop-filter: blur(25px);
-        -webkit-backdrop-filter: blur(25px);
+        box-shadow: 0 0 0 4px rgba(0, 166, 82, 0.3), 0 16px 64px rgba(0, 0, 0, 0.2);
+        background: rgba(255, 255, 255, 0.15);
+        backdrop-filter: blur(55px);
+        -webkit-backdrop-filter: blur(55px);
         outline: none;
-        transform: translateY(-1px);
+        transform: translateY(-2px);
     }
     
     .mobile-form-control.is-invalid {
@@ -454,15 +454,15 @@
     }
 }
 
-/* Advanced Mobile Enhancements */
+/* Enhanced Mobile Progress Container */
 .mobile-progress-container {
-    background: rgba(255, 255, 255, 0.4);
-    backdrop-filter: blur(15px);
-    -webkit-backdrop-filter: blur(15px);
-    padding: 1rem;
-    border-radius: 16px;
-    border: 1px solid rgba(255, 255, 255, 0.2);
-    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08);
+    background: rgba(255, 255, 255, 0.08);
+    backdrop-filter: blur(35px);
+    -webkit-backdrop-filter: blur(35px);
+    padding: 1.5rem;
+    border-radius: 20px;
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    box-shadow: 0 12px 48px rgba(0, 0, 0, 0.15);
 }
 
 .mobile-progress-bar {

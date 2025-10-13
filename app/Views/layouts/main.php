@@ -65,33 +65,35 @@
             padding-top: 80px; /* Space for floating navbar */
         }
         
-        /* Liquid Glass Foundation */
+        /* Enhanced Liquid Glass Foundation */
         .glass-effect {
-            background: var(--glass-bg);
-            backdrop-filter: blur(var(--glass-blur));
-            -webkit-backdrop-filter: blur(var(--glass-blur));
-            border: 1px solid var(--glass-border);
-            border-radius: 20px;
-            box-shadow: 0 8px 32px var(--glass-shadow);
+            background: rgba(255, 255, 255, 0.08);
+            backdrop-filter: blur(40px);
+            -webkit-backdrop-filter: blur(40px);
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            border-radius: 24px;
+            box-shadow: 0 12px 48px rgba(0, 0, 0, 0.15);
         }
         
         .glass-card {
-            background: rgba(255, 255, 255, 0.15);
-            backdrop-filter: blur(20px);
-            -webkit-backdrop-filter: blur(20px);
-            border: 1px solid rgba(255, 255, 255, 0.2);
-            border-radius: 24px;
-            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
-            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            background: rgba(255, 255, 255, 0.12);
+            backdrop-filter: blur(35px);
+            -webkit-backdrop-filter: blur(35px);
+            border: 1px solid rgba(255, 255, 255, 0.18);
+            border-radius: 28px;
+            box-shadow: 0 16px 64px rgba(0, 0, 0, 0.12);
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
         }
         
         .glass-card:hover {
-            transform: translateY(-8px);
-            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
-            background: rgba(255, 255, 255, 0.2);
+            transform: translateY(-12px);
+            box-shadow: 0 24px 80px rgba(0, 0, 0, 0.18);
+            background: rgba(255, 255, 255, 0.18);
+            backdrop-filter: blur(45px);
+            -webkit-backdrop-filter: blur(45px);
         }
         
-        /* Apple-Style Floating Navigation */
+        /* Enhanced Apple-Style Floating Navigation */
         .navbar {
             position: fixed !important;
             top: 20px !important;
@@ -99,21 +101,23 @@
             transform: translateX(-50%) !important;
             width: calc(100% - 40px) !important;
             max-width: 1200px !important;
-            background: rgba(255, 255, 255, 0.85) !important;
-            backdrop-filter: blur(30px) !important;
-            -webkit-backdrop-filter: blur(30px) !important;
-            border: 1px solid rgba(255, 255, 255, 0.2) !important;
-            border-radius: 20px !important;
-            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.12) !important;
+            background: rgba(255, 255, 255, 0.15) !important;
+            backdrop-filter: blur(50px) !important;
+            -webkit-backdrop-filter: blur(50px) !important;
+            border: 1px solid rgba(255, 255, 255, 0.25) !important;
+            border-radius: 24px !important;
+            box-shadow: 0 16px 64px rgba(0, 0, 0, 0.15) !important;
             z-index: 1000 !important;
-            padding: 12px 24px !important;
-            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
+            padding: 16px 28px !important;
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1) !important;
         }
         
         .navbar:hover {
-            background: rgba(255, 255, 255, 0.9) !important;
-            box-shadow: 0 12px 40px rgba(0, 0, 0, 0.15) !important;
-            transform: translateX(-50%) translateY(-2px) !important;
+            background: rgba(255, 255, 255, 0.22) !important;
+            backdrop-filter: blur(60px) !important;
+            -webkit-backdrop-filter: blur(60px) !important;
+            box-shadow: 0 20px 80px rgba(0, 0, 0, 0.2) !important;
+            transform: translateX(-50%) translateY(-4px) !important;
         }
         
         .navbar-brand {
@@ -276,27 +280,27 @@
             font-weight: 500;
         }
         
-        /* Apple-Style Form Controls with Stronger Glass Effects */
+        /* Enhanced Apple-Style Form Controls with Dramatic Glass Effects */
         .form-control, .form-select {
-            background: rgba(255, 255, 255, 0.6);
-            backdrop-filter: blur(15px);
-            -webkit-backdrop-filter: blur(15px);
-            border: 2px solid rgba(255, 255, 255, 0.2);
-            border-radius: 12px;
-            padding: 12px 16px;
+            background: rgba(255, 255, 255, 0.08);
+            backdrop-filter: blur(30px);
+            -webkit-backdrop-filter: blur(30px);
+            border: 2px solid rgba(255, 255, 255, 0.15);
+            border-radius: 16px;
+            padding: 14px 18px;
             font-size: 16px;
-            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08);
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.12);
         }
         
         .form-control:focus, .form-select:focus {
             border-color: var(--smartelite-primary);
-            box-shadow: 0 0 0 4px rgba(0, 166, 82, 0.25), 0 8px 32px rgba(0, 0, 0, 0.15);
-            background: rgba(255, 255, 255, 0.85);
-            backdrop-filter: blur(25px);
-            -webkit-backdrop-filter: blur(25px);
+            box-shadow: 0 0 0 4px rgba(0, 166, 82, 0.3), 0 16px 64px rgba(0, 0, 0, 0.2);
+            background: rgba(255, 255, 255, 0.15);
+            backdrop-filter: blur(50px);
+            -webkit-backdrop-filter: blur(50px);
             outline: none;
-            transform: translateY(-1px);
+            transform: translateY(-2px);
         }
         
         .alert {
@@ -336,35 +340,110 @@
             box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
         }
         
-        /* Mobile-specific improvements */
+        /* Enhanced Mobile-Specific Improvements */
         @media (max-width: 768px) {
             .main-content {
                 padding: 1rem;
             }
             
+            /* Enhanced Mobile Navbar with iOS Glass Effect */
             .navbar {
-                top: 10px !important;
-                width: calc(100% - 20px) !important;
-                padding: 8px 16px !important;
-                border-radius: 16px !important;
+                top: 15px !important;
+                width: calc(100% - 30px) !important;
+                padding: 12px 20px !important;
+                border-radius: 20px !important;
+                background: rgba(255, 255, 255, 0.12) !important;
+                backdrop-filter: blur(45px) !important;
+                -webkit-backdrop-filter: blur(45px) !important;
+                border: 1px solid rgba(255, 255, 255, 0.2) !important;
+                box-shadow: 0 12px 48px rgba(0, 0, 0, 0.15) !important;
+            }
+            
+            .navbar:hover {
+                background: rgba(255, 255, 255, 0.18) !important;
+                backdrop-filter: blur(55px) !important;
+                -webkit-backdrop-filter: blur(55px) !important;
+                box-shadow: 0 16px 64px rgba(0, 0, 0, 0.2) !important;
             }
             
             .navbar-brand {
-                font-size: 1.1rem;
+                font-size: 1.2rem;
+                color: var(--smartelite-dark) !important;
             }
             
             .navbar-nav {
-                gap: 8px !important;
+                gap: 10px !important;
             }
             
             .navbar-nav .nav-link {
-                padding: 6px 12px !important;
-                font-size: 0.9rem !important;
+                padding: 8px 14px !important;
+                font-size: 0.95rem !important;
+                background: rgba(255, 255, 255, 0.1) !important;
+                backdrop-filter: blur(20px) !important;
+                -webkit-backdrop-filter: blur(20px) !important;
+                border: 1px solid rgba(255, 255, 255, 0.15) !important;
+                border-radius: 12px !important;
+                color: var(--smartelite-dark) !important;
+                transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
+            }
+            
+            .navbar-nav .nav-link:hover {
+                background: rgba(0, 166, 82, 0.15) !important;
+                border-color: rgba(0, 166, 82, 0.25) !important;
+                transform: translateY(-1px) !important;
+                box-shadow: 0 4px 16px rgba(0, 166, 82, 0.2) !important;
             }
             
             .navbar-nav .btn-primary {
-                padding: 6px 16px !important;
-                font-size: 0.9rem !important;
+                padding: 8px 18px !important;
+                font-size: 0.95rem !important;
+                background: var(--smartelite-primary) !important;
+                border: none !important;
+                border-radius: 12px !important;
+                box-shadow: 0 4px 16px rgba(0, 166, 82, 0.3) !important;
+                transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
+            }
+            
+            .navbar-nav .btn-primary:hover {
+                background: var(--smartelite-secondary) !important;
+                transform: translateY(-2px) !important;
+                box-shadow: 0 8px 24px rgba(0, 166, 82, 0.4) !important;
+            }
+            
+            /* Mobile Navbar Toggle Button */
+            .navbar-toggler {
+                background: rgba(255, 255, 255, 0.1) !important;
+                backdrop-filter: blur(20px) !important;
+                -webkit-backdrop-filter: blur(20px) !important;
+                border: 1px solid rgba(255, 255, 255, 0.15) !important;
+                border-radius: 12px !important;
+                padding: 8px 12px !important;
+            }
+            
+            .navbar-toggler:focus {
+                box-shadow: 0 0 0 4px rgba(0, 166, 82, 0.25) !important;
+            }
+            
+            .navbar-toggler-icon {
+                background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 30 30'%3e%3cpath stroke='rgba%2833, 37, 41, 0.75%29' stroke-linecap='round' stroke-miterlimit='10' stroke-width='2' d='M4 7h22M4 15h22M4 23h22'/%3e%3c/svg%3e") !important;
+            }
+            
+            /* Mobile Navbar Collapse with Glass Effect */
+            .navbar-collapse {
+                background: rgba(255, 255, 255, 0.1) !important;
+                backdrop-filter: blur(30px) !important;
+                -webkit-backdrop-filter: blur(30px) !important;
+                border: 1px solid rgba(255, 255, 255, 0.15) !important;
+                border-radius: 16px !important;
+                margin-top: 10px !important;
+                padding: 15px !important;
+                box-shadow: 0 8px 32px rgba(0, 0, 0, 0.15) !important;
+            }
+            
+            .navbar-collapse.show {
+                background: rgba(255, 255, 255, 0.15) !important;
+                backdrop-filter: blur(40px) !important;
+                -webkit-backdrop-filter: blur(40px) !important;
             }
             
             .container-fluid {
@@ -375,7 +454,7 @@
             /* Prevent horizontal scrolling */
             body {
                 overflow-x: hidden;
-                padding-top: 70px; /* Reduced for mobile */
+                padding-top: 80px; /* Adjusted for enhanced navbar */
             }
             
             /* Touch-friendly button sizing */
@@ -391,6 +470,34 @@
             }
         }
         
+        /* Very Small Mobile Screens */
+        @media (max-width: 480px) {
+            .navbar {
+                top: 10px !important;
+                width: calc(100% - 20px) !important;
+                padding: 10px 16px !important;
+                border-radius: 18px !important;
+            }
+            
+            .navbar-brand {
+                font-size: 1.1rem;
+            }
+            
+            .navbar-nav .nav-link {
+                padding: 6px 12px !important;
+                font-size: 0.9rem !important;
+            }
+            
+            .navbar-nav .btn-primary {
+                padding: 6px 14px !important;
+                font-size: 0.9rem !important;
+            }
+            
+            body {
+                padding-top: 75px;
+            }
+        }
+        
         /* Touch device optimizations */
         @media (hover: none) and (pointer: coarse) {
             .btn:hover {
@@ -399,6 +506,10 @@
             
             .card:hover {
                 transform: none; /* Disable hover effects on touch devices */
+            }
+            
+            .navbar:hover {
+                transform: translateX(-50%) !important; /* Keep navbar centered on touch */
             }
         }
         
@@ -437,34 +548,40 @@
                 <i class="bi bi-lightning-charge-fill me-2"></i>SmartElite
             </a>
             
-            <div class="navbar-nav ms-auto">
-                <a class="nav-link" href="<?= base_url('forms') ?>">
-                    <i class="bi bi-file-earmark-text me-1"></i>Forms
-                </a>
-                <a class="nav-link" href="#about">
-                    <i class="bi bi-info-circle me-1"></i>About
-                </a>
-                
-                <?php if (session()->get('user_id')): ?>
-                    <div class="nav-item dropdown">
-                        <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown">
-                            <i class="bi bi-person-circle me-1"></i><?= session()->get('username') ?>
-                        </a>
-                        <ul class="dropdown-menu">
-                            <li><a class="dropdown-item" href="<?= base_url('admin') ?>">
-                                <i class="bi bi-speedometer2 me-2"></i>Dashboard
-                            </a></li>
-                            <li><hr class="dropdown-divider"></li>
-                            <li><a class="dropdown-item" href="<?= base_url('admin/logout') ?>">
-                                <i class="bi bi-box-arrow-right me-2"></i>Logout
-                            </a></li>
-                        </ul>
-                    </div>
-                <?php else: ?>
-                    <a class="btn btn-primary" href="<?= base_url('admin/login') ?>">
-                        <i class="bi bi-box-arrow-in-right me-1"></i>Admin
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <div class="navbar-nav ms-auto">
+                    <a class="nav-link" href="<?= base_url('forms') ?>">
+                        <i class="bi bi-file-earmark-text me-1"></i>Forms
                     </a>
-                <?php endif; ?>
+                    <a class="nav-link" href="#about">
+                        <i class="bi bi-info-circle me-1"></i>About
+                    </a>
+                    
+                    <?php if (session()->get('user_id')): ?>
+                        <div class="nav-item dropdown">
+                            <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown">
+                                <i class="bi bi-person-circle me-1"></i><?= session()->get('username') ?>
+                            </a>
+                            <ul class="dropdown-menu">
+                                <li><a class="dropdown-item" href="<?= base_url('admin') ?>">
+                                    <i class="bi bi-speedometer2 me-2"></i>Dashboard
+                                </a></li>
+                                <li><hr class="dropdown-divider"></li>
+                                <li><a class="dropdown-item" href="<?= base_url('admin/logout') ?>">
+                                    <i class="bi bi-box-arrow-right me-2"></i>Logout
+                                </a></li>
+                            </ul>
+                        </div>
+                    <?php else: ?>
+                        <a class="btn btn-primary" href="<?= base_url('admin/login') ?>">
+                            <i class="bi bi-box-arrow-in-right me-1"></i>Admin
+                        </a>
+                    <?php endif; ?>
+                </div>
             </div>
         </div>
     </nav>

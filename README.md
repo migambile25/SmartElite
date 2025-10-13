@@ -1,5 +1,7 @@
 # SmartElite Initiative - Laptop Application System
 
+**Developed by Abdulmujib Nizary Migambile**
+
 A comprehensive form builder and application system for the SmartElite Initiative, built with CodeIgniter 4. This system manages laptop applications for undergraduate students in Tanzania, providing affordable access to essential digital tools through partnerships with CRDB Bank Foundation and HESLB.
 
 ## About SmartElite Initiative
@@ -224,6 +226,8 @@ This project is proprietary. Please check the LICENSE file for details.
 ## Support
 
 For support and questions:
+- **Developer**: Abdulmujib Nizary Migambile
+- **Email**: migambile25@gmail.com
 - Create an issue in the repository
 - Check the troubleshooting section
 - Review CodeIgniter 4 documentation

@@ -34,10 +34,18 @@ class Register extends Controller
             throw new \CodeIgniter\Exceptions\PageNotFoundException('Form not found');
         }
 
+        $validation = \Config\Services::validation();
+        if (session()->has('errors')) {
+            $errors = (array) session('errors');
+            foreach ($errors as $fieldName => $message) {
+                $validation->setError($fieldName, $message);
+            }
+        }
+
         $data = [
             'title' => $form['title'] . ' - SmartElite Registration',
             'form' => $form,
-            'validation' => \Config\Services::validation()
+            'validation' => $validation
         ];
 
         return view('register/form', $data);
@@ -65,7 +73,7 @@ class Register extends Controller
             $minutes = ceil($timeUntilReset / 60);
             
             log_message('warning', "Rate limit exceeded for IP {$ip} on form {$slug}");
-            $this->session->setFlashdata('error', "Too many submissions. Please try again in {$minutes} minutes.");
+            session()->setFlashdata('error', "Too many submissions. Please try again in {$minutes} minutes.");
             return redirect()->back()->withInput();
         }
 
@@ -119,7 +127,7 @@ class Register extends Controller
 
         if (!$validation->withRequest($this->request)->run()) {
             log_message('debug', 'Validation failed: ' . json_encode($validation->getErrors()));
-            return redirect()->back()->withInput()->with('validation', $validation);
+            return redirect()->back()->withInput()->with('errors', $validation->getErrors());
         }
         
         log_message('debug', 'Validation passed for form submission');
@@ -136,7 +144,7 @@ class Register extends Controller
             ]);
             
             log_message('warning', "Suspicious submission blocked from IP {$ip} on form {$slug}");
-            $this->session->setFlashdata('error', 'Submission blocked due to suspicious activity.');
+            session()->setFlashdata('error', 'Submission blocked due to suspicious activity.');
             return redirect()->back()->withInput();
         }
 
@@ -168,7 +176,7 @@ class Register extends Controller
             $duplicateCheck = $this->duplicateDetectionService->checkForDuplicates($form['id'], $submissionData);
             
             if ($duplicateCheck['is_duplicate']) {
-                $this->session->setFlashdata('error', $duplicateCheck['message']);
+                session()->setFlashdata('error', $duplicateCheck['message']);
                 return redirect()->back()->withInput();
             }
         } catch (\Exception $e) {
@@ -212,7 +220,7 @@ class Register extends Controller
             $errors = $this->formSubmissionModel->errors();
             log_message('error', 'Failed to save submission. Model errors: ' . json_encode($errors));
             log_message('error', 'Submission data that failed: ' . json_encode($submission));
-            $this->session->setFlashdata('error', 'There was an error submitting your form. Please try again.');
+            session()->setFlashdata('error', 'There was an error submitting your form. Please try again.');
             return redirect()->back()->withInput();
         }
     }

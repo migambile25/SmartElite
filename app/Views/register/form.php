@@ -39,6 +39,23 @@
                 </div>
                 
                 <div class="card-body p-5">
+                    <?php if (session()->getFlashdata('error')): ?>
+                        <div class="alert alert-danger text-center">
+                            <i class="bi bi-exclamation-triangle-fill me-2"></i>
+                            <?= session()->getFlashdata('error') ?>
+                        </div>
+                    <?php endif; ?>
+
+                    <?php if (session('errors')): ?>
+                        <div class="alert alert-danger">
+                            <ul class="mb-0">
+                                <?php foreach (session('errors') as $err): ?>
+                                    <li><?= esc($err) ?></li>
+                                <?php endforeach; ?>
+                            </ul>
+                        </div>
+                    <?php endif; ?>
+
                     <?php if (session()->getFlashdata('success')): ?>
                         <div class="alert alert-success text-center">
                             <i class="bi bi-check-circle-fill me-2"></i>

@@ -9,7 +9,7 @@
             <div class="mb-4">
                 <img src="<?= base_url('assets/SMARTELITE PACKAGE LOGOS/SMARTELITE1@2x-100.jpg') ?>" 
                      alt="SmartElite Initiative" 
-                     class="img-fluid mb-3" 
+                     class="img-fluid forms-brand-logo mb-3" 
                      style="max-height: 80px;">
             </div>
             <h1 class="display-5 fw-bold mb-3">Available Forms</h1>
@@ -155,6 +155,18 @@
     border-radius: 20px;
     padding: 0.5rem 1rem;
     font-size: 0.875rem;
+}
+
+/* Forms Gallery Brand Logo Styling */
+.forms-brand-logo {
+    border-radius: 12px;
+    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
+}
+
+.forms-brand-logo:hover {
+    transform: scale(1.02);
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
 }
 
 @media (max-width: 768px) {

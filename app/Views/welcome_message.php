@@ -10,7 +10,7 @@
                 <div class="mb-4">
                     <img src="<?= base_url('assets/SMARTELITE PACKAGE LOGOS/SMARTELITE1@2x-100.jpg') ?>" 
                          alt="SmartElite Initiative" 
-                         class="img-fluid mb-3" 
+                         class="img-fluid hero-brand-logo mb-3" 
                          style="max-height: 80px;">
                 </div>
                 <h1 class="display-4 mb-4">
@@ -217,26 +217,31 @@
         </div>
     </div>
 
-    <!-- Admin Access -->
-    <?php if (!session()->get('user_id')): ?>
-    <div class="row py-4">
-        <div class="col-12 text-center">
-            <div class="card border-secondary">
-                <div class="card-body">
-                    <h5 class="card-title">
-                        <i class="bi bi-gear me-2"></i>Administrator Access
-                    </h5>
-                    <p class="card-text text-muted">
-                        Manage forms and view submissions through our admin panel.
+    
+    
+    <!-- Footer with Brand Logo -->
+    <footer class="footer-section mt-5 py-5">
+        <div class="container">
+            <div class="row align-items-center">
+                <div class="col-md-6">
+                    <div class="footer-brand d-flex align-items-center">
+                        <img src="<?= base_url('assets/SMARTELITE PACKAGE LOGOS/SMARTELITE1@2x-100.jpg') ?>" 
+                             alt="SmartElite" 
+                             class="footer-logo me-3">
+                        <div>
+                            <h5 class="mb-1">SmartElite Initiative</h5>
+                            <p class="text-muted mb-0">Empowering Tanzania's digital future</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-6 text-md-end">
+                    <p class="text-muted mb-0">
+                        &copy; <?= date('Y') ?> SmartElite Initiative. All rights reserved.
                     </p>
-                    <a href="<?= base_url('admin/login') ?>" class="btn btn-outline-secondary">
-                        <i class="bi bi-box-arrow-in-right me-2"></i>Admin Login
-                    </a>
                 </div>
             </div>
         </div>
-    </div>
-    <?php endif; ?>
+    </footer>
 </div>
 
 <style>
@@ -275,6 +280,37 @@
     background: rgba(255, 255, 255, 0.12);
     backdrop-filter: blur(60px);
     -webkit-backdrop-filter: blur(60px);
+}
+
+/* Hero Brand Logo Styling */
+.hero-brand-logo {
+    border-radius: 12px;
+    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
+}
+
+.hero-brand-logo:hover {
+    transform: scale(1.02);
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
+}
+
+/* Footer Brand Logo Styling */
+.footer-section {
+    background: rgba(255, 255, 255, 0.05);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.footer-logo {
+    height: 40px;
+    width: auto;
+    border-radius: 8px;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.footer-logo:hover {
+    transform: scale(1.05);
 }
 
 /* Enhanced About Section Icons with Dramatic Glass Effects */

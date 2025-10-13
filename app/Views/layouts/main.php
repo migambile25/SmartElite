@@ -126,6 +126,19 @@
             font-size: 1.25rem;
             letter-spacing: -0.02em;
             margin: 0 !important;
+            display: flex;
+            align-items: center;
+        }
+        
+        .navbar-logo {
+            height: 32px;
+            width: auto;
+            border-radius: 6px;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        
+        .navbar-logo:hover {
+            transform: scale(1.05);
         }
         
         /* Floating Action Buttons */
@@ -371,6 +384,10 @@
                 color: var(--smartelite-dark) !important;
             }
             
+            .navbar-logo {
+                height: 28px;
+            }
+            
             .navbar-nav {
                 gap: 10px !important;
             }
@@ -483,6 +500,10 @@
                 font-size: 1.1rem;
             }
             
+            .navbar-logo {
+                height: 24px;
+            }
+            
             .navbar-nav .nav-link {
                 padding: 6px 12px !important;
                 font-size: 0.9rem !important;
@@ -545,7 +566,10 @@
     <nav class="navbar navbar-expand-lg">
         <div class="container-fluid">
             <a class="navbar-brand" href="<?= base_url() ?>">
-                <i class="bi bi-lightning-charge-fill me-2"></i>SmartElite
+                <img src="<?= base_url('assets/SMARTELITE PACKAGE LOGOS/SMARTELITE1@2x-100.jpg') ?>" 
+                     alt="SmartElite" 
+                     class="navbar-logo me-2">
+                SmartElite
             </a>
             
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">

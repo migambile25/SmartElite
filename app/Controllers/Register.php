@@ -6,6 +6,7 @@ use App\Models\FormModel;
 use App\Models\FormSubmissionModel;
 use App\Services\NotificationService;
 use App\Services\DuplicateDetectionService;
+use App\Services\RateLimitService;
 use CodeIgniter\Controller;
 
 class Register extends Controller
@@ -14,6 +15,7 @@ class Register extends Controller
     protected $formSubmissionModel;
     protected $notificationService;
     protected $duplicateDetectionService;
+    protected $rateLimitService;
 
     public function __construct()
     {
@@ -21,6 +23,7 @@ class Register extends Controller
         $this->formSubmissionModel = new FormSubmissionModel();
         $this->notificationService = new NotificationService();
         $this->duplicateDetectionService = new DuplicateDetectionService();
+        $this->rateLimitService = new RateLimitService();
     }
 
     public function index($slug)
@@ -54,6 +57,17 @@ class Register extends Controller
         }
         
         log_message('debug', 'Form found: ' . json_encode($form));
+
+        // Check rate limiting
+        $ip = $this->request->getIPAddress();
+        if ($this->rateLimitService->isRateLimited($ip, $slug)) {
+            $timeUntilReset = $this->rateLimitService->getTimeUntilReset($ip, $slug);
+            $minutes = ceil($timeUntilReset / 60);
+            
+            log_message('warning', "Rate limit exceeded for IP {$ip} on form {$slug}");
+            $this->session->setFlashdata('error', "Too many submissions. Please try again in {$minutes} minutes.");
+            return redirect()->back()->withInput();
+        }
 
         // Build validation rules dynamically based on form fields
         $validationRules = [];
@@ -109,6 +123,25 @@ class Register extends Controller
         }
         
         log_message('debug', 'Validation passed for form submission');
+
+        // Check for suspicious activity
+        $userAgent = $this->request->getUserAgent()->getAgentString();
+        $preliminaryData = $this->request->getPost();
+        
+        if ($this->rateLimitService->isSuspiciousSubmission($preliminaryData, $userAgent)) {
+            $this->rateLimitService->logSuspiciousActivity($ip, 'Suspicious submission pattern detected', [
+                'form_slug' => $slug,
+                'user_agent' => $userAgent,
+                'ip' => $ip
+            ]);
+            
+            log_message('warning', "Suspicious submission blocked from IP {$ip} on form {$slug}");
+            $this->session->setFlashdata('error', 'Submission blocked due to suspicious activity.');
+            return redirect()->back()->withInput();
+        }
+
+        // Record this attempt
+        $this->rateLimitService->recordAttempt($ip, $slug);
 
         // Prepare submission data
         $submissionData = [];

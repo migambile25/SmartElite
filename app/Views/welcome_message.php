@@ -53,9 +53,12 @@
             <p class="lead text-muted">Empowering Tanzania's future through digital inclusion</p>
         </div>
         
-        <div class="col-lg-8 mx-auto">
-            <div class="card glass-card">
+        <div class="col-lg-6 mb-4">
+            <div class="card glass-card h-100">
                 <div class="card-body p-5">
+                    <div class="about-icon mb-4">
+                        <i class="bi bi-exclamation-triangle" style="font-size: 3rem; color: var(--smartelite-danger);"></i>
+                    </div>
                     <h4 class="card-title mb-4">The Challenge</h4>
                     <p class="card-text">
                         With over <strong>201,000 undergraduate students</strong> enrolled in 2023/24, only a fraction 
@@ -64,8 +67,17 @@
                         more than <strong>76,000 loan beneficiaries</strong>, but the current loan package doesn't 
                         cover laptop costs.
                     </p>
-                    
-                    <h4 class="card-title mb-4 mt-5">Our Solution</h4>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-lg-6 mb-4">
+            <div class="card glass-card h-100">
+                <div class="card-body p-5">
+                    <div class="about-icon mb-4">
+                        <i class="bi bi-lightbulb" style="font-size: 3rem; color: var(--smartelite-primary);"></i>
+                    </div>
+                    <h4 class="card-title mb-4">Our Solution</h4>
                     <p class="card-text">
                         SmartElite provides students with <strong>affordable laptops at TZS 300,000</strong>, 
                         payable in two structured installments per semester directly from their allowances. 
@@ -131,7 +143,7 @@
     </div>
 
     <!-- Partners Section -->
-    <div class="partners-section glass-card">
+    <div class="partners-section">
         <div class="row">
             <div class="col-12 text-center mb-5">
                 <h2 class="h1">Our Partners</h2>
@@ -265,6 +277,29 @@
     -webkit-backdrop-filter: blur(25px);
 }
 
+/* About Section Icons */
+.about-icon {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 80px;
+    height: 80px;
+    margin: 0 auto;
+    background: rgba(255, 255, 255, 0.1);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    border-radius: 20px;
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.about-icon:hover {
+    transform: translateY(-2px) scale(1.05);
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
+    background: rgba(255, 255, 255, 0.15);
+}
+
 .min-vh-50 {
     min-height: 50vh;
 }
@@ -362,7 +397,7 @@
 }
 
 .partners-section {
-    padding: 3rem;
+    padding: 3rem 0;
     margin: 2rem 0;
 }
 

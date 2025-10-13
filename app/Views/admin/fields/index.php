@@ -8,7 +8,7 @@
         <i class="bi bi-list-ul me-2"></i>Manage Fields - <?= esc($form['title']) ?>
     </h1>
     <div class="btn-toolbar mb-2 mb-md-0">
-        <div class="btn-group me-2" role="group">
+        <div class="d-flex gap-2 me-2">
             <a href="<?= base_url('admin/forms/' . $form['id'] . '/fields/create') ?>" class="btn btn-primary">
                 <i class="bi bi-plus-circle me-2"></i>Add Field
             </a>
@@ -90,7 +90,7 @@
                                     </td>
                                     <td>
                                         <?php if ($field['deleted_flag']): ?>
-                                            <div class="btn-group" role="group">
+                                            <div class="d-flex gap-1">
                                                 <a href="<?= base_url('admin/forms/' . $form['id'] . '/fields/restore/' . $field['id']) ?>" 
                                                    class="btn btn-sm btn-outline-success" 
                                                    title="Restore Field"
@@ -105,7 +105,7 @@
                                                 </a>
                                             </div>
                                         <?php else: ?>
-                                            <div class="btn-group" role="group">
+                                            <div class="d-flex gap-1">
                                                 <a href="<?= base_url('admin/forms/' . $form['id'] . '/fields/edit/' . $field['id']) ?>" 
                                                    class="btn btn-sm btn-outline-warning" 
                                                    title="Edit Field">

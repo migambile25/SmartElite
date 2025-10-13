@@ -24,12 +24,16 @@ class Dashboard extends BaseController
         $activeForms = $this->formModel->where('is_active', true)->countAllResults();
         $totalSubmissions = $this->formSubmissionModel->countAllResults();
         
-        // Get recent submissions
+        // Get recent submissions (configurable limit)
+        $submissionLimit = (int)($this->request->getGet('limit') ?: 10); // Default to 10, allow override via URL
+        $submissionLimit = min($submissionLimit, 50); // Cap at 50 for performance
+        
         $recentSubmissions = $this->formSubmissionModel
             ->select('form_submissions.*, forms.title as form_title')
             ->join('forms', 'forms.id = form_submissions.form_id')
+            ->where('form_submissions.deleted_flag', false) // Only show non-deleted submissions
             ->orderBy('submitted_at', 'DESC')
-            ->limit(10)
+            ->limit($submissionLimit)
             ->findAll();
 
         // Get forms with submission counts
@@ -46,7 +50,8 @@ class Dashboard extends BaseController
             'activeForms' => $activeForms,
             'totalSubmissions' => $totalSubmissions,
             'recentSubmissions' => $recentSubmissions,
-            'formsWithStats' => $formsWithStats
+            'formsWithStats' => $formsWithStats,
+            'submissionLimit' => $submissionLimit
         ];
 
         return view('admin/dashboard/index', $data);

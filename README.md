@@ -219,7 +219,7 @@ SmartElite/
 
 ## License
 
-This project is open source. Please check the LICENSE file for details.
+This project is proprietary. Please check the LICENSE file for details.
 
 ## Support
 

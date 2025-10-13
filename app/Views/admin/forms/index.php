@@ -84,7 +84,7 @@
                             </td>
                             <td>
                                 <?php if ($form['deleted_flag']): ?>
-                                    <div class="btn-group" role="group">
+                                    <div class="d-flex gap-1">
                                         <a href="<?= base_url('admin/forms/restore/' . $form['id']) ?>" 
                                            class="btn btn-sm btn-outline-success" 
                                            title="Restore Form"
@@ -99,7 +99,7 @@
                                         </a>
                                     </div>
                                 <?php else: ?>
-                                    <div class="btn-group" role="group">
+                                    <div class="d-flex gap-1 flex-wrap">
                                         <a href="<?= base_url('admin/forms/' . $form['id'] . '/fields') ?>" 
                                            class="btn btn-sm btn-outline-primary" 
                                            title="Manage Fields">

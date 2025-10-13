@@ -72,53 +72,57 @@ if (!function_exists('getSubmissionDataCount')) {
                 <hr>
 
                 <h6>Form Data</h6>
-                <div class="table-responsive">
-                    <table class="table table-striped">
-                        <thead>
-                            <tr>
-                                <th>Field</th>
-                                <th>Value</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <?php 
-                            $submissionData = $submission['submission_data'] ?? '';
-                            if (is_string($submissionData)) {
-                                $submissionData = json_decode($submissionData, true) ?? [];
-                            }
-                            if (!empty($submissionData) && is_array($submissionData)): ?>
-                                <?php foreach ($submissionData as $fieldName => $value): ?>
-                                <tr>
-                                    <td>
-                                        <strong><?= esc(ucwords(str_replace('_', ' ', $fieldName))) ?></strong>
-                                    </td>
-                                    <td>
+                <?php 
+                $submissionData = $submission['submission_data'] ?? '';
+                if (is_string($submissionData)) {
+                    $submissionData = json_decode($submissionData, true) ?? [];
+                }
+                if (!empty($submissionData) && is_array($submissionData)): ?>
+                    <div class="row">
+                        <?php foreach ($submissionData as $fieldName => $value): ?>
+                        <div class="col-md-6 mb-3">
+                            <div class="card border-0 bg-light">
+                                <div class="card-body p-3">
+                                    <h6 class="card-title text-primary mb-2">
+                                        <i class="bi bi-tag me-1"></i><?= esc(ucwords(str_replace('_', ' ', $fieldName))) ?>
+                                    </h6>
+                                    <div class="card-text">
                                         <?php if (is_array($value)): ?>
-                                            <ul class="mb-0">
+                                            <ul class="mb-0 list-unstyled">
                                                 <?php foreach ($value as $item): ?>
-                                                    <li><?= esc($item) ?></li>
+                                                    <li class="mb-1">
+                                                        <span class="badge bg-secondary"><?= esc($item) ?></span>
+                                                    </li>
                                                 <?php endforeach; ?>
                                             </ul>
                                         <?php elseif (is_string($value) && strlen($value) > 100): ?>
-                                            <div class="text-break">
+                                            <div class="text-break bg-white p-2 rounded border">
                                                 <?= esc($value) ?>
                                             </div>
+                                        <?php elseif (filter_var($value, FILTER_VALIDATE_EMAIL)): ?>
+                                            <a href="mailto:<?= esc($value) ?>" class="text-decoration-none">
+                                                <i class="bi bi-envelope me-1"></i><?= esc($value) ?>
+                                            </a>
+                                        <?php elseif (preg_match('/^[\+]?[1-9][\d]{0,15}$/', $value)): ?>
+                                            <a href="tel:<?= esc($value) ?>" class="text-decoration-none">
+                                                <i class="bi bi-telephone me-1"></i><?= esc($value) ?>
+                                            </a>
                                         <?php else: ?>
-                                            <?= esc($value) ?>
+                                            <span class="text-dark"><?= esc($value) ?></span>
                                         <?php endif; ?>
-                                    </td>
-                                </tr>
-                                <?php endforeach; ?>
-                            <?php else: ?>
-                                <tr>
-                                    <td colspan="2" class="text-center text-muted">
-                                        <i class="bi bi-inbox me-2"></i>No data available
-                                    </td>
-                                </tr>
-                            <?php endif; ?>
-                        </tbody>
-                    </table>
-                </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <?php endforeach; ?>
+                    </div>
+                <?php else: ?>
+                    <div class="text-center py-4">
+                        <i class="bi bi-inbox text-muted" style="font-size: 3rem;"></i>
+                        <h5 class="mt-3 text-muted">No Data Available</h5>
+                        <p class="text-muted">This submission doesn't contain any form data.</p>
+                    </div>
+                <?php endif; ?>
 
                 <?php if ($submission['user_agent']): ?>
                 <hr>

@@ -8,12 +8,14 @@
         <i class="bi bi-inbox me-2"></i>Submissions - <?= esc($form['title']) ?>
     </h1>
     <div class="btn-toolbar mb-2 mb-md-0">
-        <a href="<?= base_url('admin/forms/' . $form['id'] . '/submissions/export') ?>" class="btn btn-success">
-            <i class="bi bi-download me-2"></i>Export CSV
-        </a>
-        <a href="<?= base_url('admin/forms') ?>" class="btn btn-outline-secondary ms-2">
-            <i class="bi bi-arrow-left me-2"></i>Back to Forms
-        </a>
+        <div class="d-flex gap-2">
+            <a href="<?= base_url('admin/forms/' . $form['id'] . '/submissions/export') ?>" class="btn btn-success">
+                <i class="bi bi-download me-2"></i>Export CSV
+            </a>
+            <a href="<?= base_url('admin/forms') ?>" class="btn btn-outline-secondary">
+                <i class="bi bi-arrow-left me-2"></i>Back to Forms
+            </a>
+        </div>
     </div>
 </div>
 
@@ -125,6 +127,7 @@
                                 <tr>
                                     <th>ID</th>
                                     <th>Submitted</th>
+                                    <th>Data Preview</th>
                                     <th>IP Address</th>
                                     <th>Actions</th>
                                 </tr>
@@ -149,11 +152,39 @@
                                         </div>
                                     </td>
                                     <td>
-                                        <code><?= esc($submission['ip_address']) ?></code>
+                                        <?php 
+                                        $submissionData = $submission['submission_data'] ?? '';
+                                        if (is_string($submissionData)) {
+                                            $submissionData = json_decode($submissionData, true) ?? [];
+                                        }
+                                        if (!empty($submissionData) && is_array($submissionData)): 
+                                            $previewData = array_slice($submissionData, 0, 2, true);
+                                        ?>
+                                            <div class="small">
+                                                <?php foreach ($previewData as $key => $value): ?>
+                                                    <div class="mb-1">
+                                                        <strong><?= esc(ucwords(str_replace('_', ' ', $key))) ?>:</strong>
+                                                        <span class="text-muted">
+                                                            <?= esc(strlen($value) > 30 ? substr($value, 0, 30) . '...' : $value) ?>
+                                                        </span>
+                                                    </div>
+                                                <?php endforeach; ?>
+                                                <?php if (count($submissionData) > 2): ?>
+                                                    <small class="text-muted">
+                                                        <i class="bi bi-three-dots"></i> +<?= count($submissionData) - 2 ?> more fields
+                                                    </small>
+                                                <?php endif; ?>
+                                            </div>
+                                        <?php else: ?>
+                                            <span class="text-muted small">No data</span>
+                                        <?php endif; ?>
+                                    </td>
+                                    <td>
+                                        <code class="small"><?= esc($submission['ip_address']) ?></code>
                                     </td>
                                     <td>
                                         <?php if ($submission['deleted_flag']): ?>
-                                            <div class="btn-group" role="group">
+                                            <div class="d-flex gap-1">
                                                 <a href="<?= base_url('admin/forms/' . $form['id'] . '/submissions/restore/' . $submission['id']) ?>" 
                                                    class="btn btn-sm btn-outline-success" 
                                                    title="Restore Submission"
@@ -168,7 +199,7 @@
                                                 </a>
                                             </div>
                                         <?php else: ?>
-                                            <div class="btn-group" role="group">
+                                            <div class="d-flex gap-1">
                                                 <a href="<?= base_url('admin/forms/' . $form['id'] . '/submissions/' . $submission['id']) ?>" 
                                                    class="btn btn-sm btn-outline-primary" 
                                                    title="View Submission">

@@ -350,9 +350,9 @@ class NotificationService
         $phoneNumber = preg_replace('/[^0-9+]/', '', $phoneNumber);
         
         // If it doesn't start with +, assume it's a Tanzanian number and add +255
-        if (!str_starts_with($phoneNumber, '+')) {
+        if (substr($phoneNumber, 0, 1) !== '+') {
             // Remove leading 0 if present
-            if (str_starts_with($phoneNumber, '0')) {
+            if (substr($phoneNumber, 0, 1) === '0') {
                 $phoneNumber = substr($phoneNumber, 1);
             }
             $phoneNumber = '+255' . $phoneNumber;

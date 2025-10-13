@@ -4,23 +4,23 @@ namespace App\Controllers;
 
 use App\Models\FormModel;
 use App\Models\FormSubmissionModel;
-use App\Services\NotificationService;
-use App\Services\DuplicateDetectionService;
+// use App\Services\NotificationService; // DISABLED
+// use App\Services\DuplicateDetectionService; // DISABLED
 use CodeIgniter\Controller;
 
 class Register extends Controller
 {
     protected $formModel;
     protected $formSubmissionModel;
-    protected $notificationService;
-    protected $duplicateDetectionService;
+    // protected $notificationService; // DISABLED
+    // protected $duplicateDetectionService; // DISABLED
 
     public function __construct()
     {
         $this->formModel = new FormModel();
         $this->formSubmissionModel = new FormSubmissionModel();
-        $this->notificationService = new NotificationService();
-        $this->duplicateDetectionService = new DuplicateDetectionService();
+        // $this->notificationService = new NotificationService(); // DISABLED
+        // $this->duplicateDetectionService = new DuplicateDetectionService(); // DISABLED
     }
 
     public function index($slug)
@@ -42,11 +42,17 @@ class Register extends Controller
 
     public function submit($slug)
     {
+        // Log the submission attempt
+        log_message('debug', 'Registration form submission attempt for slug: ' . $slug);
+        
         $form = $this->formModel->getFormBySlug($slug);
         
         if (!$form) {
+            log_message('error', 'Form not found for slug: ' . $slug);
             throw new \CodeIgniter\Exceptions\PageNotFoundException('Form not found');
         }
+        
+        log_message('debug', 'Form found: ' . json_encode($form));
 
         // Build validation rules dynamically based on form fields
         $validationRules = [];
@@ -97,8 +103,11 @@ class Register extends Controller
         $validation->setRules($validationRules, $validationMessages);
 
         if (!$validation->withRequest($this->request)->run()) {
+            log_message('debug', 'Validation failed: ' . json_encode($validation->getErrors()));
             return redirect()->back()->withInput()->with('validation', $validation);
         }
+        
+        log_message('debug', 'Validation passed for form submission');
 
         // Prepare submission data
         $submissionData = [];
@@ -120,14 +129,8 @@ class Register extends Controller
             }
         }
 
-        // Check for duplicates before saving
-        $duplicates = $this->duplicateDetectionService->checkForDuplicates($form['id'], $submissionData);
-        
-        if (!empty($duplicates)) {
-            $duplicateMessage = $this->duplicateDetectionService->generateDuplicateMessage($duplicates);
-            $this->session->setFlashdata('error', 'Duplicate submission detected: ' . $duplicateMessage);
-            return redirect()->back()->withInput();
-        }
+        // Check for duplicates before saving (DISABLED)
+        // TODO: Re-enable after basic form submission is working
 
         // Save submission
         $submission = [
@@ -138,23 +141,22 @@ class Register extends Controller
             'submitted_at' => date('Y-m-d H:i:s')
         ];
 
+        // Debug: Log submission data
+        log_message('debug', 'Attempting to save submission: ' . json_encode($submission));
+        
         if ($this->formSubmissionModel->insert($submission)) {
-            // Send notifications
-            try {
-                // Send confirmation to user
-                $this->notificationService->sendFormSubmissionConfirmation($form, $submissionData);
-                
-                // Send notification to admin
-                $this->notificationService->sendAdminNotification($form, $submissionData);
-                
-            } catch (\Exception $e) {
-                // Log notification errors but don't fail the submission
-                log_message('error', 'Notification error: ' . $e->getMessage());
-            }
+            log_message('debug', 'Submission saved successfully');
+            
+            // Send notifications (DISABLED)
+            // TODO: Re-enable after basic form submission is working
 
             // Redirect to success page with form data
             return redirect()->to('/register/' . $slug . '/success');
         } else {
+            // Log model errors
+            $errors = $this->formSubmissionModel->errors();
+            log_message('error', 'Failed to save submission. Model errors: ' . json_encode($errors));
+            log_message('error', 'Submission data that failed: ' . json_encode($submission));
             $this->session->setFlashdata('error', 'There was an error submitting your form. Please try again.');
             return redirect()->back()->withInput();
         }

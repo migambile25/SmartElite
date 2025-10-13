@@ -109,9 +109,9 @@ class DuplicateDetectionService
         if (preg_match('/^[\+]?[0-9\s\-\(\)]+$/', $value)) {
             $normalized = preg_replace('/[^0-9+]/', '', $normalized);
             // Remove leading 0 and add +255 for Tanzanian numbers
-            if (str_starts_with($normalized, '0')) {
+            if (substr($normalized, 0, 1) === '0') {
                 $normalized = '+255' . substr($normalized, 1);
-            } elseif (!str_starts_with($normalized, '+')) {
+            } elseif (substr($normalized, 0, 1) !== '+') {
                 $normalized = '+255' . $normalized;
             }
         }

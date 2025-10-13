@@ -4,23 +4,23 @@ namespace App\Controllers;
 
 use App\Models\FormModel;
 use App\Models\FormSubmissionModel;
-// use App\Services\NotificationService; // DISABLED
-// use App\Services\DuplicateDetectionService; // DISABLED
+use App\Services\NotificationService;
+use App\Services\DuplicateDetectionService;
 use CodeIgniter\Controller;
 
 class Register extends Controller
 {
     protected $formModel;
     protected $formSubmissionModel;
-    // protected $notificationService; // DISABLED
-    // protected $duplicateDetectionService; // DISABLED
+    protected $notificationService;
+    protected $duplicateDetectionService;
 
     public function __construct()
     {
         $this->formModel = new FormModel();
         $this->formSubmissionModel = new FormSubmissionModel();
-        // $this->notificationService = new NotificationService(); // DISABLED
-        // $this->duplicateDetectionService = new DuplicateDetectionService(); // DISABLED
+        $this->notificationService = new NotificationService();
+        $this->duplicateDetectionService = new DuplicateDetectionService();
     }
 
     public function index($slug)
@@ -43,7 +43,8 @@ class Register extends Controller
     public function submit($slug)
     {
         // Log the submission attempt
-        log_message('debug', 'Registration form submission attempt for slug: ' . $slug);
+        log_message('debug', 'FORM SUBMISSION START - slug: ' . $slug);
+        log_message('debug', 'POST data: ' . json_encode($this->request->getPost()));
         
         $form = $this->formModel->getFormBySlug($slug);
         
@@ -129,8 +130,18 @@ class Register extends Controller
             }
         }
 
-        // Check for duplicates before saving (DISABLED)
-        // TODO: Re-enable after basic form submission is working
+        // Check for duplicates before saving
+        try {
+            $duplicateCheck = $this->duplicateDetectionService->checkForDuplicates($form['id'], $submissionData);
+            
+            if ($duplicateCheck['is_duplicate']) {
+                $this->session->setFlashdata('error', $duplicateCheck['message']);
+                return redirect()->back()->withInput();
+            }
+        } catch (\Exception $e) {
+            // Log the error but don't block submission
+            log_message('error', 'Duplicate detection failed: ' . $e->getMessage());
+        }
 
         // Save submission
         $submission = [
@@ -147,8 +158,19 @@ class Register extends Controller
         if ($this->formSubmissionModel->insert($submission)) {
             log_message('debug', 'Submission saved successfully');
             
-            // Send notifications (DISABLED)
-            // TODO: Re-enable after basic form submission is working
+            // Send notifications
+            try {
+                // Send confirmation to user
+                $this->notificationService->sendFormSubmissionConfirmation($form, $submissionData);
+                
+                // Send notification to admin
+                $this->notificationService->sendAdminNotification($form, $submissionData);
+                
+                log_message('debug', 'Notifications sent successfully');
+            } catch (\Exception $e) {
+                // Log the error but don't block the success redirect
+                log_message('error', 'Notification sending failed: ' . $e->getMessage());
+            }
 
             // Redirect to success page with form data
             return redirect()->to('/register/' . $slug . '/success');

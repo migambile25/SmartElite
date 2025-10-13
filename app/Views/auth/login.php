@@ -134,7 +134,7 @@
         <div class="text-center mt-4">
             <p class="text-muted">
                 <small>
-                    Default credentials: <strong>admin</strong> / <strong>admin123</strong><br>
+                    Default credentials: <strong>Contact System Admin</strong><br>
                     <em>Please change the default password after first login!</em>
                 </small>
             </p>

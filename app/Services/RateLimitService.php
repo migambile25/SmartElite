@@ -92,7 +92,15 @@ class RateLimitService
             'click here', 'free money', 'make money', 'work from home'
         ];
         
-        $textContent = strtolower(implode(' ', $submissionData));
+        $flatValues = [];
+        foreach ($submissionData as $value) {
+            if (is_array($value)) {
+                $flatValues[] = implode(' ', array_map('strval', $value));
+            } elseif (is_scalar($value)) {
+                $flatValues[] = (string) $value;
+            }
+        }
+        $textContent = strtolower(implode(' ', $flatValues));
         foreach ($spamPatterns as $pattern) {
             if (strpos($textContent, $pattern) !== false) {
                 return true;

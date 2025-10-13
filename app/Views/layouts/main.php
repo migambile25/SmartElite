@@ -2,8 +2,22 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, user-scalable=yes">
     <title><?= $title ?? 'SmartElite' ?></title>
+    
+    <!-- Progressive Web App Meta Tags -->
+    <meta name="theme-color" content="#1e3a8a">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="default">
+    <meta name="apple-mobile-web-app-title" content="SmartElite">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="application-name" content="SmartElite">
+    
+    <!-- Favicon and App Icons -->
+    <link rel="icon" type="image/x-icon" href="<?= base_url('assets/favicon.ico') ?>">
+    <link rel="apple-touch-icon" sizes="180x180" href="<?= base_url('assets/apple-touch-icon.png') ?>">
+    <link rel="icon" type="image/png" sizes="32x32" href="<?= base_url('assets/favicon-32x32.png') ?>">
+    <link rel="icon" type="image/png" sizes="16x16" href="<?= base_url('assets/favicon-16x16.png') ?>">
     
     <!-- Google Fonts -->
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
@@ -134,6 +148,76 @@
             color: var(--smartelite-gray);
             font-weight: 400;
         }
+        
+        /* Mobile-specific improvements */
+        @media (max-width: 768px) {
+            .main-content {
+                padding: 1rem;
+            }
+            
+            .navbar-brand {
+                font-size: 1.25rem;
+            }
+            
+            .container-fluid {
+                padding-left: 0.5rem;
+                padding-right: 0.5rem;
+            }
+            
+            /* Prevent horizontal scrolling */
+            body {
+                overflow-x: hidden;
+            }
+            
+            /* Touch-friendly button sizing */
+            .btn {
+                min-height: 44px;
+                touch-action: manipulation;
+            }
+            
+            /* Better form spacing on mobile */
+            .form-control, .form-select {
+                font-size: 16px; /* Prevents zoom on iOS */
+                min-height: 44px;
+            }
+        }
+        
+        /* Touch device optimizations */
+        @media (hover: none) and (pointer: coarse) {
+            .btn:hover {
+                transform: none; /* Disable hover effects on touch devices */
+            }
+            
+            .card:hover {
+                transform: none; /* Disable hover effects on touch devices */
+            }
+        }
+        
+        /* Performance optimizations */
+        * {
+            -webkit-tap-highlight-color: transparent;
+        }
+        
+        /* Improved accessibility */
+        @media (prefers-reduced-motion: reduce) {
+            * {
+                animation-duration: 0.01ms !important;
+                animation-iteration-count: 1 !important;
+                transition-duration: 0.01ms !important;
+            }
+        }
+        
+        /* High contrast mode support */
+        @media (prefers-contrast: high) {
+            .mobile-form-control {
+                border-width: 2px;
+            }
+            
+            .btn {
+                border-width: 2px;
+            }
+        }
+        
     </style>
 </head>
 <body>

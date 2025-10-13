@@ -15,12 +15,18 @@ class RateLimitService
         $this->config = config('RateLimit');
     }
 
+    private function makeKey(string $ip, string $formSlug, string $suffix = ''): string
+    {
+        $raw = "rate_limit_{$ip}_{$formSlug}{$suffix}";
+        return preg_replace('/[^A-Za-z0-9_]/', '_', $raw);
+    }
+
     /**
      * Check if IP is rate limited for form submissions
      */
     public function isRateLimited(string $ip, string $formSlug = 'general'): bool
     {
-        $key = "rate_limit:{$ip}:{$formSlug}";
+        $key = $this->makeKey($ip, $formSlug);
         $attempts = $this->cache->get($key) ?: 0;
         
         return $attempts >= $this->config->maxAttempts;
@@ -31,7 +37,7 @@ class RateLimitService
      */
     public function recordAttempt(string $ip, string $formSlug = 'general'): void
     {
-        $key = "rate_limit:{$ip}:{$formSlug}";
+        $key = $this->makeKey($ip, $formSlug);
         $attempts = $this->cache->get($key) ?: 0;
         $attempts++;
         
@@ -43,7 +49,7 @@ class RateLimitService
      */
     public function getRemainingAttempts(string $ip, string $formSlug = 'general'): int
     {
-        $key = "rate_limit:{$ip}:{$formSlug}";
+        $key = $this->makeKey($ip, $formSlug);
         $attempts = $this->cache->get($key) ?: 0;
         
         return max(0, $this->config->maxAttempts - $attempts);
@@ -54,7 +60,7 @@ class RateLimitService
      */
     public function getTimeUntilReset(string $ip, string $formSlug = 'general'): int
     {
-        $key = "rate_limit:{$ip}:{$formSlug}";
+        $key = $this->makeKey($ip, $formSlug);
         $ttl = $this->cache->getMetadata($key)['expire'] ?? 0;
         
         return max(0, $ttl - time());

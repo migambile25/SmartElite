@@ -3,7 +3,7 @@
 <?= $this->section('content') ?>
 
 <div class="container">
-    <!-- Hero Section -->
+    <!-- Hero Section with Apple-Style Design -->
     <div class="hero-section">
         <div class="row align-items-center">
             <div class="col-lg-6">
@@ -23,14 +23,14 @@
                 </p>
                 <div class="d-flex gap-3 flex-wrap">
                     <?php if ($primaryForm): ?>
-                        <a href="<?= base_url('register/' . $primaryForm['slug']) ?>" class="btn btn-primary btn-lg">
+                        <a href="<?= base_url('register/' . $primaryForm['slug']) ?>" class="btn btn-primary btn-lg floating-btn">
                             <i class="bi bi-laptop me-2"></i><?= esc($primaryForm['title']) ?>
                         </a>
                     <?php endif; ?>
-                    <a href="<?= base_url('forms') ?>" class="btn btn-outline-primary btn-lg">
+                    <a href="<?= base_url('forms') ?>" class="btn btn-outline-primary btn-lg floating-btn">
                         <i class="bi bi-file-earmark-text me-2"></i>View All Forms
                     </a>
-                    <a href="#about" class="btn btn-outline-secondary btn-lg">
+                    <a href="#about" class="btn btn-outline-secondary btn-lg floating-btn">
                         <i class="bi bi-info-circle me-2"></i>Learn More
                     </a>
                 </div>
@@ -39,8 +39,8 @@
                 <div class="hero-image">
                     <img src="<?= base_url('assets/SMARTELITE PACKAGE LOGOS/SMARTELITE2@2x-100.jpg') ?>" 
                          alt="SmartElite Laptop Program" 
-                         class="img-fluid" 
-                         style="max-height: 400px;">
+                         class="img-fluid hero-logo" 
+                         style="max-height: 400px; border-radius: 20px;">
                 </div>
             </div>
         </div>
@@ -54,7 +54,7 @@
         </div>
         
         <div class="col-lg-8 mx-auto">
-            <div class="card border-0 shadow-sm">
+            <div class="card glass-card">
                 <div class="card-body p-5">
                     <h4 class="card-title mb-4">The Challenge</h4>
                     <p class="card-text">
@@ -85,10 +85,10 @@
         </div>
         
         <div class="col-lg-4 mb-4">
-            <div class="card h-100 border-0 shadow-sm">
+            <div class="card h-100 glass-card">
                 <div class="card-body text-center p-4">
                     <div class="feature-icon mb-3">
-                        <i class="bi bi-laptop text-primary" style="font-size: 3rem;"></i>
+                        <i class="bi bi-laptop" style="font-size: 3rem; color: var(--smartelite-primary);"></i>
                     </div>
                     <h4 class="card-title">Affordable Digital Access</h4>
                     <p class="card-text text-muted">
@@ -100,10 +100,10 @@
         </div>
         
         <div class="col-lg-4 mb-4">
-            <div class="card h-100 border-0 shadow-sm">
+            <div class="card h-100 glass-card">
                 <div class="card-body text-center p-4">
                     <div class="feature-icon mb-3">
-                        <i class="bi bi-book text-success" style="font-size: 3rem;"></i>
+                        <i class="bi bi-book" style="font-size: 3rem; color: var(--smartelite-secondary);"></i>
                     </div>
                     <h4 class="card-title">Digital Literacy</h4>
                     <p class="card-text text-muted">
@@ -115,10 +115,10 @@
         </div>
         
         <div class="col-lg-4 mb-4">
-            <div class="card h-100 border-0 shadow-sm">
+            <div class="card h-100 glass-card">
                 <div class="card-body text-center p-4">
                     <div class="feature-icon mb-3">
-                        <i class="bi bi-lightbulb text-warning" style="font-size: 3rem;"></i>
+                        <i class="bi bi-lightbulb" style="font-size: 3rem; color: var(--smartelite-accent);"></i>
                     </div>
                     <h4 class="card-title">Innovation & Entrepreneurship</h4>
                     <p class="card-text text-muted">
@@ -131,7 +131,7 @@
     </div>
 
     <!-- Partners Section -->
-    <div class="partners-section">
+    <div class="partners-section glass-card">
         <div class="row">
             <div class="col-12 text-center mb-5">
                 <h2 class="h1">Our Partners</h2>
@@ -139,10 +139,10 @@
             </div>
         
         <div class="col-lg-4 mb-4">
-            <div class="card h-100 border-0 shadow-sm">
+            <div class="card h-100 glass-card">
                 <div class="card-body text-center p-4">
                     <div class="feature-icon mb-3">
-                        <i class="bi bi-bank text-primary" style="font-size: 3rem;"></i>
+                        <i class="bi bi-bank" style="font-size: 3rem; color: var(--smartelite-primary);"></i>
                     </div>
                     <h4 class="card-title">CRDB Bank Foundation</h4>
                     <p class="card-text text-muted">
@@ -153,10 +153,10 @@
         </div>
         
         <div class="col-lg-4 mb-4">
-            <div class="card h-100 border-0 shadow-sm">
+            <div class="card h-100 glass-card">
                 <div class="card-body text-center p-4">
                     <div class="feature-icon mb-3">
-                        <i class="bi bi-mortarboard text-success" style="font-size: 3rem;"></i>
+                        <i class="bi bi-mortarboard" style="font-size: 3rem; color: var(--smartelite-secondary);"></i>
                     </div>
                     <h4 class="card-title">HESLB</h4>
                     <p class="card-text text-muted">
@@ -164,13 +164,13 @@
                     </p>
                 </div>
             </div>
-</div>
+        </div>
 
         <div class="col-lg-4 mb-4">
-            <div class="card h-100 border-0 shadow-sm">
+            <div class="card h-100 glass-card">
                 <div class="card-body text-center p-4">
                     <div class="feature-icon mb-3">
-                        <i class="bi bi-building text-info" style="font-size: 3rem;"></i>
+                        <i class="bi bi-building" style="font-size: 3rem; color: var(--smartelite-accent);"></i>
                     </div>
                     <h4 class="card-title">Basil Link</h4>
                     <p class="card-text text-muted">
@@ -183,21 +183,21 @@
     </div>
 
     <!-- CTA Section -->
-    <div class="cta-section text-white">
+    <div class="cta-section glass-card">
         <div class="row">
             <div class="col-12 text-center">
-                <h2 class="h1 mb-3 text-white">Ready to Apply?</h2>
-                <p class="lead mb-4 text-white-50">
+                <h2 class="h1 mb-3">Ready to Apply?</h2>
+                <p class="lead mb-4 text-muted">
                     Join 5,000 students across 20 universities in Tanzania. Get your affordable laptop 
                     and unlock your academic potential.
                 </p>
                 <div class="d-flex justify-content-center gap-3 flex-wrap">
                     <?php if ($primaryForm): ?>
-                        <a href="<?= base_url('register/' . $primaryForm['slug']) ?>" class="btn btn-light btn-lg">
+                        <a href="<?= base_url('register/' . $primaryForm['slug']) ?>" class="btn btn-primary btn-lg">
                             <i class="bi bi-laptop me-2"></i><?= esc($primaryForm['title']) ?>
                         </a>
                     <?php endif; ?>
-                    <a href="#about" class="btn btn-outline-light btn-lg">
+                    <a href="#about" class="btn btn-outline-primary btn-lg">
                         <i class="bi bi-info-circle me-2"></i>Learn More
                     </a>
                 </div>
@@ -228,16 +228,41 @@
 </div>
 
 <style>
-:root {
-    --smartelite-primary: #1e3a8a;
-    --smartelite-secondary: #3b82f6;
-    --smartelite-accent: #06b6d4;
-    --smartelite-success: #10b981;
-    --smartelite-warning: #f59e0b;
-    --smartelite-danger: #ef4444;
-    --smartelite-dark: #1f2937;
-    --smartelite-light: #f8fafc;
-    --smartelite-gray: #6b7280;
+/* Landing Page Specific Styles */
+
+/* Apple-Style Floating Buttons */
+.floating-btn {
+    position: relative;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
+}
+
+.floating-btn:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 12px 32px rgba(0, 0, 0, 0.15);
+}
+
+.floating-btn:active {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2);
+}
+
+/* Hero Logo with Apple-Style Glass Effect */
+.hero-logo {
+    background: rgba(255, 255, 255, 0.1);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.hero-logo:hover {
+    transform: translateY(-4px) scale(1.02);
+    box-shadow: 0 16px 48px rgba(0, 0, 0, 0.15);
+    background: rgba(255, 255, 255, 0.15);
+    backdrop-filter: blur(25px);
+    -webkit-backdrop-filter: blur(25px);
 }
 
 .min-vh-50 {
@@ -332,22 +357,16 @@
 }
 
 .hero-section {
-    background: linear-gradient(135deg, var(--smartelite-light) 0%, #ffffff 100%);
-    border-radius: 2rem;
     padding: 3rem;
     margin: 2rem 0;
 }
 
 .partners-section {
-    background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
-    border-radius: 2rem;
     padding: 3rem;
     margin: 2rem 0;
 }
 
 .cta-section {
-    background: linear-gradient(135deg, var(--smartelite-primary) 0%, var(--smartelite-secondary) 100%);
-    border-radius: 2rem;
     padding: 4rem 3rem;
     margin: 2rem 0;
 }

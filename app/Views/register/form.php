@@ -29,8 +29,8 @@
 
     <div class="row justify-content-center">
         <div class="col-12 col-md-10 col-lg-8 col-xl-7">
-            <div class="card shadow-lg border-0 mobile-form-card">
-                <div class="card-header bg-primary text-white text-center py-3 py-md-4">
+            <div class="card glass-card mobile-form-card">
+                <div class="card-header glass-effect text-center py-3 py-md-4" style="background: linear-gradient(135deg, var(--smartelite-primary) 0%, var(--smartelite-secondary) 100%); color: white;">
                     <h1 class="h3 h2-md mb-2 mobile-form-title">
                         <i class="bi bi-lightning-charge-fill me-2"></i><?= esc($form['title']) ?>
                     </h1>
@@ -254,17 +254,7 @@
 </div>
 
 <style>
-:root {
-    --smartelite-primary: #1e3a8a;
-    --smartelite-secondary: #3b82f6;
-    --smartelite-accent: #06b6d4;
-    --smartelite-success: #10b981;
-    --smartelite-warning: #f59e0b;
-    --smartelite-danger: #ef4444;
-    --smartelite-dark: #1f2937;
-    --smartelite-light: #f8fafc;
-    --smartelite-gray: #6b7280;
-}
+/* Form Specific Styles - Inherits brand colors from main layout */
 
 .form-check-group .form-check {
     margin-bottom: 0.5rem;
@@ -274,17 +264,7 @@
     margin-bottom: 0;
 }
 
-.card {
-    border-radius: 1.5rem;
-    border: 1px solid #e5e7eb;
-    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
-}
-
-.card-header {
-    border-radius: 1.5rem 1.5rem 0 0 !important;
-    background: linear-gradient(135deg, var(--smartelite-primary) 0%, var(--smartelite-secondary) 100%);
-    border: none;
-}
+/* Form card inherits glass-card from main layout */
 
 .btn-lg {
     padding: 0.75rem 2rem;
@@ -293,41 +273,14 @@
     border-radius: 0.75rem;
 }
 
-.btn-primary {
-    background-color: var(--smartelite-primary);
-    border-color: var(--smartelite-primary);
-}
-
-.btn-primary:hover {
-    background-color: var(--smartelite-secondary);
-    border-color: var(--smartelite-secondary);
-    transform: translateY(-1px);
-}
+/* Button styles inherit from main layout */
 
 .alert {
     border-radius: 1rem;
     border: none;
 }
 
-.form-control:focus {
-    border-color: var(--smartelite-primary);
-    box-shadow: 0 0 0 0.2rem rgba(30, 58, 138, 0.25);
-}
-
-.form-select:focus {
-    border-color: var(--smartelite-primary);
-    box-shadow: 0 0 0 0.2rem rgba(30, 58, 138, 0.25);
-}
-
-.form-check-input:checked {
-    background-color: var(--smartelite-primary);
-    border-color: var(--smartelite-primary);
-}
-
-.form-check-input:focus {
-    border-color: var(--smartelite-primary);
-    box-shadow: 0 0 0 0.2rem rgba(30, 58, 138, 0.25);
-}
+/* Form control styles inherit from main layout */
 
 .text-danger {
     color: var(--smartelite-danger) !important;
@@ -365,16 +318,24 @@
     .mobile-form-control {
         font-size: 16px; /* Prevents zoom on iOS */
         padding: 0.75rem;
-        border-radius: 0.5rem;
+        border-radius: 12px;
         min-height: 48px; /* Touch-friendly minimum height */
-        border: 1px solid #e5e7eb;
-        transition: border-color 0.2s ease, box-shadow 0.2s ease;
+        background: rgba(255, 255, 255, 0.6);
+        backdrop-filter: blur(15px);
+        -webkit-backdrop-filter: blur(15px);
+        border: 2px solid rgba(255, 255, 255, 0.2);
+        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08);
     }
     
     .mobile-form-control:focus {
         border-color: var(--smartelite-primary);
-        box-shadow: 0 0 0 0.2rem rgba(30, 58, 138, 0.15);
+        box-shadow: 0 0 0 4px rgba(0, 166, 82, 0.25), 0 8px 32px rgba(0, 0, 0, 0.15);
+        background: rgba(255, 255, 255, 0.85);
+        backdrop-filter: blur(25px);
+        -webkit-backdrop-filter: blur(25px);
         outline: none;
+        transform: translateY(-1px);
     }
     
     .mobile-form-control.is-invalid {
@@ -495,10 +456,13 @@
 
 /* Advanced Mobile Enhancements */
 .mobile-progress-container {
-    background: #f8fafc;
+    background: rgba(255, 255, 255, 0.4);
+    backdrop-filter: blur(15px);
+    -webkit-backdrop-filter: blur(15px);
     padding: 1rem;
-    border-radius: 0.75rem;
-    border: 1px solid #e5e7eb;
+    border-radius: 16px;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08);
 }
 
 .mobile-progress-bar {
@@ -516,6 +480,7 @@
     border-radius: 4px;
     transition: width 0.3s ease;
     width: 0%;
+    box-shadow: 0 2px 8px rgba(0, 166, 82, 0.3);
 }
 
 .mobile-optimized-form {

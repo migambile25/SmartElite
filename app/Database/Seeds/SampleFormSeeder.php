@@ -14,6 +14,7 @@ class SampleFormSeeder extends Seeder
             'slug' => 'smartelite',
             'description' => 'Apply for an affordable laptop through the SmartElite Initiative. Get access to essential digital tools for your academic success.',
             'is_active' => 1,
+            'is_primary' => true,
             'success_message' => 'Thank you for your application! We have received your SmartElite laptop application. Our team will review your application and contact you within 5-7 business days with further instructions.',
             'created_by' => 1, // Assuming admin user has ID 1
             'created_at' => date('Y-m-d H:i:s'),

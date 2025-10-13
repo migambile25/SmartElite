@@ -16,7 +16,9 @@ class AdminUserSeeder extends Seeder
             'created_at' => date('Y-m-d H:i:s'),
             'updated_at' => date('Y-m-d H:i:s'),
         ];
-
-        $this->db->table('users')->insert($data);
+        $existing = $this->db->table('users')->where('username', 'admin')->get()->getFirstRow();
+        if (! $existing) {
+            $this->db->table('users')->insert($data);
+        }
     }
 }

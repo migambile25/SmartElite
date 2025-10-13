@@ -21,8 +21,13 @@ class SampleFormSeeder extends Seeder
             'updated_at' => date('Y-m-d H:i:s'),
         ];
 
-        $this->db->table('forms')->insert($formData);
-        $formId = $this->db->insertID();
+        $existingForm = $this->db->table('forms')->where('slug', 'smartelite')->get()->getFirstRow();
+        if (! $existingForm) {
+            $this->db->table('forms')->insert($formData);
+            $formId = $this->db->insertID();
+        } else {
+            $formId = $existingForm->id;
+        }
 
         // Create sample form fields
         $fields = [

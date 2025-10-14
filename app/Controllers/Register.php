@@ -42,10 +42,17 @@ class Register extends Controller
             }
         }
 
+        // Count active forms for conditional UI
+        $formsCount = $this->formModel
+            ->where('deleted_flag', false)
+            ->where('is_active', true)
+            ->countAllResults();
+
         $data = [
             'title' => $form['title'] . ' - SmartElite Registration',
             'form' => $form,
-            'validation' => $validation
+            'validation' => $validation,
+            'formsCount' => $formsCount,
         ];
 
         return view('register/form', $data);
@@ -233,9 +240,15 @@ class Register extends Controller
             throw new \CodeIgniter\Exceptions\PageNotFoundException('Form not found');
         }
 
+        $formsCount = $this->formModel
+            ->where('deleted_flag', false)
+            ->where('is_active', true)
+            ->countAllResults();
+
         $data = [
             'title' => 'Application Submitted - SmartElite',
-            'form' => $form
+            'form' => $form,
+            'formsCount' => $formsCount,
         ];
 
         return view('register/success', $data);

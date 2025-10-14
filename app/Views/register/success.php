@@ -147,9 +147,11 @@
                             <a href="<?= base_url('/') ?>" class="btn btn-primary">
                                 <i class="bi bi-house me-2"></i>Return to Homepage
                             </a>
-                            <a href="<?= base_url('forms') ?>" class="btn btn-outline-primary">
-                                <i class="bi bi-file-earmark-text me-2"></i>View Other Forms
-                            </a>
+                            <?php if (isset($formsCount) && $formsCount > 1): ?>
+                                <a href="<?= base_url('forms') ?>" class="btn btn-outline-primary">
+                                    <i class="bi bi-file-earmark-text me-2"></i>View Other Forms
+                                </a>
+                            <?php endif; ?>
                             <a href="<?= base_url('register/' . $form['slug']) ?>" class="btn btn-outline-primary">
                                 <i class="bi bi-arrow-clockwise me-2"></i>Submit Another Application
                             </a>

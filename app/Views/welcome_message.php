@@ -27,9 +27,11 @@
                             <i class="bi bi-laptop me-2"></i><?= esc($primaryForm['title']) ?>
                         </a>
                     <?php endif; ?>
-                    <a href="<?= base_url('forms') ?>" class="btn btn-outline-primary btn-lg floating-btn">
-                        <i class="bi bi-file-earmark-text me-2"></i>View All Forms
-                    </a>
+                    <?php if (isset($formsCount) && $formsCount > 1): ?>
+                        <a href="<?= base_url('forms') ?>" class="btn btn-outline-primary btn-lg floating-btn">
+                            <i class="bi bi-file-earmark-text me-2"></i>View All Forms
+                        </a>
+                    <?php endif; ?>
                     <a href="#about" class="btn btn-outline-secondary btn-lg floating-btn">
                         <i class="bi bi-info-circle me-2"></i>Learn More
                     </a>
@@ -209,9 +211,15 @@
                             <i class="bi bi-laptop me-2"></i><?= esc($primaryForm['title']) ?>
                         </a>
                     <?php endif; ?>
-                    <a href="#about" class="btn btn-outline-primary btn-lg">
-                        <i class="bi bi-info-circle me-2"></i>Learn More
-                    </a>
+                    <?php if (!isset($formsCount) || $formsCount > 1): ?>
+                        <a href="#about" class="btn btn-outline-primary btn-lg">
+                            <i class="bi bi-info-circle me-2"></i>Learn More
+                        </a>
+                    <?php else: ?>
+                        <a href="#about" class="btn btn-outline-primary btn-lg">
+                            <i class="bi bi-info-circle me-2"></i>Learn More
+                        </a>
+                    <?php endif; ?>
                 </div>
             </div>
         </div>

@@ -159,6 +159,9 @@ class FormFields extends BaseController
             throw new \CodeIgniter\Exceptions\PageNotFoundException('Form or field not found');
         }
 
+        // Process field options for display
+        $field = $this->formFieldModel->processFieldForDisplay($field);
+
         $data = [
             'title' => 'Edit Field - ' . $form['title'],
             'form' => $form,

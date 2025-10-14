@@ -114,7 +114,7 @@
                                   id="field_options" 
                                   name="field_options" 
                                   rows="4"
-                                  placeholder="Enter options, one per line"><?= old('field_options', $field['field_options']) ?></textarea>
+                                  placeholder="Enter options, one per line"><?= old('field_options', is_array($field['field_options']) ? implode("\n", $field['field_options']) : $field['field_options']) ?></textarea>
                         <div class="form-text">For dropdown, radio, or checkbox fields. Enter one option per line.</div>
                     </div>
 

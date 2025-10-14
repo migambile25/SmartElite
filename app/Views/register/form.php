@@ -92,14 +92,25 @@
                                         if (is_array($field['field_options'])) {
                                             $fieldOptions = $field['field_options'];
                                         } elseif (is_string($field['field_options'])) {
+                                            // Try JSON decode first
                                             $decoded = json_decode($field['field_options'], true);
                                             if (json_last_error() === JSON_ERROR_NONE && is_array($decoded)) {
                                                 $fieldOptions = $decoded;
                                             } else {
-                                                // Fallback: treat as newline-separated values
+                                                // If JSON decode fails, try to parse as newline-separated values
                                                 $fieldOptions = array_filter(array_map('trim', explode("\n", $field['field_options'])));
                                             }
                                         }
+                                    }
+                                    
+                                    // Force proper array format for selection fields
+                                    if (in_array($field['field_type'], ['select', 'radio', 'checkbox']) && !is_array($fieldOptions)) {
+                                        $fieldOptions = [];
+                                    }
+                                    
+                                    // Debug: Log field options for troubleshooting (remove in production)
+                                    if (in_array($field['field_type'], ['select', 'radio', 'checkbox'])) {
+                                        log_message('debug', "Field: {$field['field_name']}, Type: {$field['field_type']}, Raw options: " . json_encode($field['field_options']) . ", Processed options: " . json_encode($fieldOptions));
                                     }
                                     
                                     $hasError = $validation->hasError($field['field_name']);

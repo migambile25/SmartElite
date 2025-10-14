@@ -140,6 +140,7 @@ class FormModel extends Model
 
         $formFieldModel = new FormFieldModel();
         $form['fields'] = $formFieldModel->getFieldsByFormId($form['id']);
+        
 
         return $form;
     }

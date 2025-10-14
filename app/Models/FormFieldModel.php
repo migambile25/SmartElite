@@ -148,9 +148,17 @@ class FormFieldModel extends Model
 
     public function getFieldsByFormId($formId)
     {
-        return $this->where('form_id', $formId)
-                   ->orderBy('field_order', 'ASC')
-                   ->findAll();
+        $fields = $this->where('form_id', $formId)
+                      ->where('deleted_flag', false)
+                      ->orderBy('field_order', 'ASC')
+                      ->findAll();
+        
+        // Process field options for each field
+        foreach ($fields as &$field) {
+            $field = $this->processFieldForDisplay($field);
+        }
+        
+        return $fields;
     }
 
     public function reorderFields($formId, $fieldOrders)
@@ -161,11 +169,45 @@ class FormFieldModel extends Model
         return true;
     }
 
+    /**
+     * Process field data for display, ensuring proper JSON decoding of options
+     */
+    public function processFieldForDisplay($field)
+    {
+        if (!$field) {
+            return $field;
+        }
+        
+        // Ensure field_options is properly decoded
+        if (!empty($field['field_options'])) {
+            if (is_string($field['field_options'])) {
+                $decoded = json_decode($field['field_options'], true);
+                if (json_last_error() === JSON_ERROR_NONE && is_array($decoded)) {
+                    $field['field_options'] = $decoded;
+                } else {
+                    // If JSON decode fails, try to parse as newline-separated values
+                    $options = array_filter(array_map('trim', explode("\n", $field['field_options'])));
+                    $field['field_options'] = !empty($options) ? $options : [];
+                }
+            }
+        } else {
+            $field['field_options'] = [];
+        }
+        
+        // Validate that selection fields have options
+        if (in_array($field['field_type'], ['select', 'radio', 'checkbox']) && empty($field['field_options'])) {
+            log_message('warning', "Selection field '{$field['field_name']}' has no options defined");
+        }
+        
+        return $field;
+    }
+
     public function getFieldOptions($fieldId)
     {
         $field = $this->find($fieldId);
         if ($field && $field['field_options']) {
-            return json_decode($field['field_options'], true);
+            $decoded = json_decode($field['field_options'], true);
+            return (json_last_error() === JSON_ERROR_NONE && is_array($decoded)) ? $decoded : [];
         }
         return [];
     }

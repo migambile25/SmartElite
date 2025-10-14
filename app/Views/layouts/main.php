@@ -577,7 +577,7 @@
             </button>
             
             <div class="collapse navbar-collapse" id="navbarNav">
-                <div class="navbar-nav ms-auto">
+            <div class="navbar-nav ms-auto">
                     <a class="nav-link" href="<?= base_url('forms') ?>">
                         <i class="bi bi-file-earmark-text me-1"></i>Forms
                     </a>
@@ -589,16 +589,16 @@
                         <div class="nav-item dropdown">
                             <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown">
                                 <i class="bi bi-person-circle me-1"></i><?= session()->get('username') ?>
-                            </a>
-                            <ul class="dropdown-menu">
-                                <li><a class="dropdown-item" href="<?= base_url('admin') ?>">
-                                    <i class="bi bi-speedometer2 me-2"></i>Dashboard
-                                </a></li>
-                                <li><hr class="dropdown-divider"></li>
-                                <li><a class="dropdown-item" href="<?= base_url('admin/logout') ?>">
-                                    <i class="bi bi-box-arrow-right me-2"></i>Logout
-                                </a></li>
-                            </ul>
+                    </a>
+                    <ul class="dropdown-menu">
+                        <li><a class="dropdown-item" href="<?= base_url('admin') ?>">
+                            <i class="bi bi-speedometer2 me-2"></i>Dashboard
+                        </a></li>
+                        <li><hr class="dropdown-divider"></li>
+                        <li><a class="dropdown-item" href="<?= base_url('admin/logout') ?>">
+                            <i class="bi bi-box-arrow-right me-2"></i>Logout
+                        </a></li>
+                    </ul>
                         </div>
                     <?php else: ?>
                         <a class="btn btn-primary" href="<?= base_url('admin/login') ?>">

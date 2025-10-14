@@ -122,10 +122,7 @@ class FormModel extends Model
         }
 
         $formFieldModel = new FormFieldModel();
-        $form['fields'] = $formFieldModel->where('form_id', $id)
-                                       ->where('deleted_flag', false)
-                                       ->orderBy('field_order', 'ASC')
-                                       ->findAll();
+        $form['fields'] = $formFieldModel->getFieldsByFormId($id);
 
         return $form;
     }
@@ -142,10 +139,7 @@ class FormModel extends Model
         }
 
         $formFieldModel = new FormFieldModel();
-        $form['fields'] = $formFieldModel->where('form_id', $form['id'])
-                                       ->where('deleted_flag', false)
-                                       ->orderBy('field_order', 'ASC')
-                                       ->findAll();
+        $form['fields'] = $formFieldModel->getFieldsByFormId($form['id']);
 
         return $form;
     }

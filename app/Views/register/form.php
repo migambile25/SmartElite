@@ -85,7 +85,23 @@
                                     
                                     <?php
                                     $fieldValue = old($field['field_name']);
-                                    $fieldOptions = !empty($field['field_options']) ? json_decode($field['field_options'], true) : [];
+                                    
+                                    // Ensure field_options is properly handled
+                                    $fieldOptions = [];
+                                    if (!empty($field['field_options'])) {
+                                        if (is_array($field['field_options'])) {
+                                            $fieldOptions = $field['field_options'];
+                                        } elseif (is_string($field['field_options'])) {
+                                            $decoded = json_decode($field['field_options'], true);
+                                            if (json_last_error() === JSON_ERROR_NONE && is_array($decoded)) {
+                                                $fieldOptions = $decoded;
+                                            } else {
+                                                // Fallback: treat as newline-separated values
+                                                $fieldOptions = array_filter(array_map('trim', explode("\n", $field['field_options'])));
+                                            }
+                                        }
+                                    }
+                                    
                                     $hasError = $validation->hasError($field['field_name']);
                                     $errorClass = $hasError ? 'is-invalid' : '';
                                     ?>
@@ -153,57 +169,78 @@
                                             <?php break; ?>
                                             
                                         <?php case 'select': ?>
-                                            <select class="form-select mobile-form-control <?= $errorClass ?>" 
-                                                    id="<?= esc($field['field_name']) ?>" 
-                                                    name="<?= esc($field['field_name']) ?>"
-                                                    <?= $field['is_required'] ? 'required' : '' ?>>
-                                                <option value="">Choose an option...</option>
-                                                <?php foreach ($fieldOptions as $option): ?>
-                                                    <option value="<?= esc($option) ?>" 
-                                                            <?= $fieldValue === $option ? 'selected' : '' ?>>
-                                                        <?= esc($option) ?>
-                                                    </option>
-                                                <?php endforeach; ?>
-                                            </select>
+                                            <?php if (empty($fieldOptions)): ?>
+                                                <div class="alert alert-warning">
+                                                    <i class="bi bi-exclamation-triangle me-2"></i>
+                                                    No options available for this field. Please contact the administrator.
+                                                </div>
+                                            <?php else: ?>
+                                                <select class="form-select mobile-form-control <?= $errorClass ?>" 
+                                                        id="<?= esc($field['field_name']) ?>" 
+                                                        name="<?= esc($field['field_name']) ?>"
+                                                        <?= $field['is_required'] ? 'required' : '' ?>>
+                                                    <option value="">Choose an option...</option>
+                                                    <?php foreach ($fieldOptions as $option): ?>
+                                                        <option value="<?= esc($option) ?>" 
+                                                                <?= $fieldValue === $option ? 'selected' : '' ?>>
+                                                            <?= esc($option) ?>
+                                                        </option>
+                                                    <?php endforeach; ?>
+                                                </select>
+                                            <?php endif; ?>
                                             <?php break; ?>
                                             
                                         <?php case 'radio': ?>
-                                            <div class="form-check-group">
-                                                <?php foreach ($fieldOptions as $index => $option): ?>
-                                                    <div class="form-check">
-                                                        <input class="form-check-input" 
-                                                               type="radio" 
-                                                               id="<?= esc($field['field_name'] . '_' . $index) ?>" 
-                                                               name="<?= esc($field['field_name']) ?>" 
-                                                               value="<?= esc($option) ?>"
-                                                               <?= $fieldValue === $option ? 'checked' : '' ?>
-                                                               <?= $field['is_required'] ? 'required' : '' ?>>
-                                                        <label class="form-check-label" for="<?= esc($field['field_name'] . '_' . $index) ?>">
-                                                            <?= esc($option) ?>
-                                                        </label>
-                                                    </div>
-                                                <?php endforeach; ?>
-                                            </div>
+                                            <?php if (empty($fieldOptions)): ?>
+                                                <div class="alert alert-warning">
+                                                    <i class="bi bi-exclamation-triangle me-2"></i>
+                                                    No options available for this field. Please contact the administrator.
+                                                </div>
+                                            <?php else: ?>
+                                                <div class="form-check-group">
+                                                    <?php foreach ($fieldOptions as $index => $option): ?>
+                                                        <div class="form-check">
+                                                            <input class="form-check-input" 
+                                                                   type="radio" 
+                                                                   id="<?= esc($field['field_name'] . '_' . $index) ?>" 
+                                                                   name="<?= esc($field['field_name']) ?>" 
+                                                                   value="<?= esc($option) ?>"
+                                                                   <?= $fieldValue === $option ? 'checked' : '' ?>
+                                                                   <?= $field['is_required'] ? 'required' : '' ?>>
+                                                            <label class="form-check-label" for="<?= esc($field['field_name'] . '_' . $index) ?>">
+                                                                <?= esc($option) ?>
+                                                            </label>
+                                                        </div>
+                                                    <?php endforeach; ?>
+                                                </div>
+                                            <?php endif; ?>
                                             <?php break; ?>
                                             
                                         <?php case 'checkbox': ?>
-                                            <div class="form-check-group">
-                                                <?php 
-                                                $checkboxValues = is_array($fieldValue) ? $fieldValue : [];
-                                                foreach ($fieldOptions as $index => $option): ?>
-                                                    <div class="form-check">
-                                                        <input class="form-check-input" 
-                                                               type="checkbox" 
-                                                               id="<?= esc($field['field_name'] . '_' . $index) ?>" 
-                                                               name="<?= esc($field['field_name']) ?>[]" 
-                                                               value="<?= esc($option) ?>"
-                                                               <?= in_array($option, $checkboxValues) ? 'checked' : '' ?>>
-                                                        <label class="form-check-label" for="<?= esc($field['field_name'] . '_' . $index) ?>">
-                                                            <?= esc($option) ?>
-                                                        </label>
-                                                    </div>
-                                                <?php endforeach; ?>
-                                            </div>
+                                            <?php if (empty($fieldOptions)): ?>
+                                                <div class="alert alert-warning">
+                                                    <i class="bi bi-exclamation-triangle me-2"></i>
+                                                    No options available for this field. Please contact the administrator.
+                                                </div>
+                                            <?php else: ?>
+                                                <div class="form-check-group">
+                                                    <?php 
+                                                    $checkboxValues = is_array($fieldValue) ? $fieldValue : [];
+                                                    foreach ($fieldOptions as $index => $option): ?>
+                                                        <div class="form-check">
+                                                            <input class="form-check-input" 
+                                                                   type="checkbox" 
+                                                                   id="<?= esc($field['field_name'] . '_' . $index) ?>" 
+                                                                   name="<?= esc($field['field_name']) ?>[]" 
+                                                                   value="<?= esc($option) ?>"
+                                                                   <?= in_array($option, $checkboxValues) ? 'checked' : '' ?>>
+                                                            <label class="form-check-label" for="<?= esc($field['field_name'] . '_' . $index) ?>">
+                                                                <?= esc($option) ?>
+                                                            </label>
+                                                        </div>
+                                                    <?php endforeach; ?>
+                                                </div>
+                                            <?php endif; ?>
                                             <?php break; ?>
                                             
                                         <?php case 'file': ?>

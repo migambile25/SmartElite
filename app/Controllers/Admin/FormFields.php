@@ -36,6 +36,14 @@ class FormFields extends BaseController
                                             ->orderBy('field_order', 'ASC')
                                             ->findAll();
         
+        // Process field options for display
+        foreach ($activeFields as &$field) {
+            $field = $this->formFieldModel->processFieldForDisplay($field);
+        }
+        foreach ($deletedFields as &$field) {
+            $field = $this->formFieldModel->processFieldForDisplay($field);
+        }
+        
         $fields = array_merge($activeFields, $deletedFields);
 
         $data = [
@@ -103,12 +111,21 @@ class FormFields extends BaseController
             return redirect()->back()->withInput()->with('validation', $validation);
         }
 
+        $fieldType = $this->request->getPost('field_type');
+        $fieldOptions = $this->request->getPost('field_options');
+        
+        // Validate that selection fields have options
+        if (in_array($fieldType, ['select', 'radio', 'checkbox']) && empty(trim($fieldOptions))) {
+            session()->setFlashdata('error', 'Selection fields (dropdown, radio, checkbox) must have options defined.');
+            return redirect()->back()->withInput();
+        }
+        
         $data = [
             'form_id' => $formId,
             'field_name' => $this->request->getPost('field_name'),
             'field_label' => $this->request->getPost('field_label'),
-            'field_type' => $this->request->getPost('field_type'),
-            'field_options' => $this->request->getPost('field_options'),
+            'field_type' => $fieldType,
+            'field_options' => $fieldOptions,
             'is_required' => $this->request->getPost('is_required') ? 1 : 0,
             'field_order' => $this->request->getPost('field_order') ?: 0,
             'validation_rules' => $this->request->getPost('validation_rules')

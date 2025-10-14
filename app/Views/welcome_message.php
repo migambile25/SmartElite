@@ -37,7 +37,7 @@
                     </a>
                 </div>
             </div>
-            <div class="col-lg-6 text-center">
+            <div class="col-lg-6 text-center d-none d-md-block">
                 <div class="hero-image">
                     <img src="<?= base_url('assets/SMARTELITE PACKAGE LOGOS/SMARTELITE2@2x-100.jpg') ?>" 
                          alt="SmartElite Laptop Program" 

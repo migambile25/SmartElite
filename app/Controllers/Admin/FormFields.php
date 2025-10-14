@@ -88,6 +88,7 @@ class FormFields extends BaseController
             'field_name' => 'permit_empty|min_length[2]|max_length[255]|alpha_dash',
             'field_label' => 'required|min_length[2]|max_length[255]',
             'field_type' => 'required|in_list[text,email,tel,number,date,textarea,select,radio,checkbox,file]',
+            'placeholder' => 'permit_empty|max_length[255]',
             'is_required' => 'permit_empty',
             'field_order' => 'permit_empty|integer'
         ], [
@@ -108,7 +109,7 @@ class FormFields extends BaseController
         ]);
 
         if (!$validation->withRequest($this->request)->run()) {
-            return redirect()->back()->withInput()->with('validation', $validation);
+            return redirect()->back()->withInput();
         }
 
         $fieldType = $this->request->getPost('field_type');
@@ -124,6 +125,7 @@ class FormFields extends BaseController
             'form_id' => $formId,
             'field_name' => $this->request->getPost('field_name'),
             'field_label' => $this->request->getPost('field_label'),
+            'placeholder' => $this->request->getPost('placeholder'),
             'field_type' => $fieldType,
             'field_options' => $fieldOptions,
             'is_required' => $this->request->getPost('is_required') ? 1 : 0,
@@ -188,6 +190,7 @@ class FormFields extends BaseController
             'field_name' => 'permit_empty|min_length[2]|max_length[255]|alpha_dash',
             'field_label' => 'required|min_length[2]|max_length[255]',
             'field_type' => 'required|in_list[text,email,tel,number,date,textarea,select,radio,checkbox,file]',
+            'placeholder' => 'permit_empty|max_length[255]',
             'is_required' => 'permit_empty',
             'field_order' => 'permit_empty|integer'
         ], [
@@ -208,12 +211,13 @@ class FormFields extends BaseController
         ]);
 
         if (!$validation->withRequest($this->request)->run()) {
-            return redirect()->back()->withInput()->with('validation', $validation);
+            return redirect()->back()->withInput();
         }
 
         $data = [
             'field_name' => $this->request->getPost('field_name'),
             'field_label' => $this->request->getPost('field_label'),
+            'placeholder' => $this->request->getPost('placeholder'),
             'field_type' => $this->request->getPost('field_type'),
             'field_options' => $this->request->getPost('field_options'),
             'is_required' => $this->request->getPost('is_required') ? 1 : 0,
@@ -370,6 +374,7 @@ class FormFields extends BaseController
                 'field_name' => 'permit_empty|min_length[2]|max_length[255]|alpha_dash',
                 'field_label' => 'required|min_length[2]|max_length[255]',
                 'field_type' => 'required|in_list[text,email,tel,number,date,textarea,select,radio,checkbox,file]',
+                'placeholder' => 'permit_empty|max_length[255]',
                 'is_required' => 'permit_empty',
                 'field_order' => 'permit_empty|integer'
             ], [
@@ -407,6 +412,7 @@ class FormFields extends BaseController
                 'form_id' => $formId,
                 'field_name' => $field['field_name'],
                 'field_label' => $field['field_label'],
+                'placeholder' => $field['placeholder'] ?? null,
                 'field_type' => $field['field_type'],
                 'field_options' => $field['field_options'] ?? null,
                 'is_required' => isset($field['is_required']) ? 1 : 0,

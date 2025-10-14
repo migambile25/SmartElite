@@ -58,7 +58,7 @@ class Filters extends BaseFilters
         'after' => [
             'pagecache',   // Web Page Caching
             'performance', // Performance Metrics
-            'toolbar',     // Debug Toolbar
+            // Debug Toolbar is added conditionally below for non-production environments
         ],
     ];
 
@@ -82,6 +82,14 @@ class Filters extends BaseFilters
             'secureheaders',
         ],
     ];
+
+    public function __construct()
+    {
+        // Enable Debug Toolbar only when not in production
+        if (ENVIRONMENT !== 'production') {
+            $this->required['after'][] = 'toolbar';
+        }
+    }
 
     /**
      * List of filter aliases that works on a

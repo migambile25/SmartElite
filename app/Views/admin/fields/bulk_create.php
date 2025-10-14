@@ -143,6 +143,19 @@
             <div class="row">
                 <div class="col-md-6">
                     <div class="mb-3">
+                        <label class="form-label">Placeholder <small class="text-muted">(Optional)</small></label>
+                        <input type="text"
+                               class="form-control field-placeholder"
+                               name="fields[INDEX][placeholder]"
+                               placeholder="e.g., Enter your first name">
+                        <div class="form-text">Shown inside input before user types</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="mb-3">
                         <label class="form-label">Field Type <span class="text-danger">*</span></label>
                         <select class="form-select field-type" name="fields[INDEX][field_type]" required>
                             <option value="">Select field type...</option>

@@ -125,6 +125,7 @@
                                                    name="<?= esc($field['field_name']) ?>" 
                                                    value="<?= esc($fieldValue) ?>"
                                                    autocomplete="off"
+                                                   <?= !empty($field['placeholder']) ? 'placeholder="' . esc($field['placeholder']) . '"' : '' ?>
                                                    <?= $field['is_required'] ? 'required' : '' ?>>
                                             <?php break; ?>
                                             
@@ -136,6 +137,7 @@
                                                    value="<?= esc($fieldValue) ?>"
                                                    autocomplete="email"
                                                    inputmode="email"
+                                                   <?= !empty($field['placeholder']) ? 'placeholder="' . esc($field['placeholder']) . '"' : '' ?>
                                                    <?= $field['is_required'] ? 'required' : '' ?>>
                                             <?php break; ?>
                                             
@@ -147,6 +149,7 @@
                                                    value="<?= esc($fieldValue) ?>"
                                                    autocomplete="tel"
                                                    inputmode="tel"
+                                                   <?= !empty($field['placeholder']) ? 'placeholder="' . esc($field['placeholder']) . '"' : '' ?>
                                                    <?= $field['is_required'] ? 'required' : '' ?>>
                                             <?php break; ?>
                                             
@@ -157,6 +160,7 @@
                                                    name="<?= esc($field['field_name']) ?>" 
                                                    value="<?= esc($fieldValue) ?>"
                                                    autocomplete="off"
+                                                   <?= !empty($field['placeholder']) ? 'placeholder="' . esc($field['placeholder']) . '"' : '' ?>
                                                    <?= $field['is_required'] ? 'required' : '' ?>>
                                             <?php break; ?>
                                             
@@ -167,6 +171,7 @@
                                                    name="<?= esc($field['field_name']) ?>" 
                                                    value="<?= esc($fieldValue) ?>"
                                                    autocomplete="off"
+                                                   <?= !empty($field['placeholder']) ? 'placeholder="' . esc($field['placeholder']) . '"' : '' ?>
                                                    <?= $field['is_required'] ? 'required' : '' ?>>
                                             <?php break; ?>
                                             
@@ -176,6 +181,7 @@
                                                       name="<?= esc($field['field_name']) ?>" 
                                                       rows="3"
                                                       autocomplete="off"
+                                                      <?= !empty($field['placeholder']) ? 'placeholder="' . esc($field['placeholder']) . '"' : '' ?>
                                                       <?= $field['is_required'] ? 'required' : '' ?>><?= esc($fieldValue) ?></textarea>
                                             <?php break; ?>
                                             

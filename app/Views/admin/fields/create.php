@@ -70,6 +70,26 @@
                     <div class="row">
                         <div class="col-md-6">
                             <div class="mb-3">
+                                <label for="placeholder" class="form-label">Placeholder <small class="text-muted">(Optional)</small></label>
+                                <input type="text"
+                                       class="form-control <?= $validation->hasError('placeholder') ? 'is-invalid' : '' ?>"
+                                       id="placeholder"
+                                       name="placeholder"
+                                       value="<?= old('placeholder') ?>"
+                                       placeholder="e.g., Enter your first name">
+                                <?php if ($validation->hasError('placeholder')): ?>
+                                    <div class="invalid-feedback">
+                                        <?= $validation->getError('placeholder') ?>
+                                    </div>
+                                <?php endif; ?>
+                                <div class="form-text">Shown inside input before user types</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="mb-3">
                                 <label for="field_type" class="form-label">Field Type <span class="text-danger">*</span></label>
                                 <select class="form-select <?= $validation->hasError('field_type') ? 'is-invalid' : '' ?>" 
                                         id="field_type" 

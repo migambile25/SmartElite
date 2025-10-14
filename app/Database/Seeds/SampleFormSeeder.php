@@ -97,6 +97,9 @@ class SampleFormSeeder extends Seeder
                 'field_label' => 'University/Institution',
                 'field_type' => 'select',
                 'field_options' => json_encode([
+                    'Mbeya University of Science and Technology',
+                    'Arusha Technical College',
+                    'Dar es Salaam Institute of Technology',
                     'University of Dar es Salaam',
                     'Sokoine University of Agriculture',
                     'Muhimbili University of Health and Allied Sciences',

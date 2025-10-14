@@ -184,7 +184,7 @@ class NotificationService
 
         // Send email confirmation
         if ($email) {
-            $subject = "Application Received - {$formData['title']}";
+            $subject = 'Confirmation: Your SmartElite Laptop Application Has Been Received';
             $htmlContent = $this->generateEmailTemplate($formData, $submissionData);
             
             $emailSent = $this->sendEmail(
@@ -256,9 +256,8 @@ class NotificationService
      */
     private function generateEmailTemplate(array $formData, array $submissionData): string
     {
-        $name = isset($submissionData['first_name']) ? $submissionData['first_name'] : 'Applicant';
+        $name = isset($submissionData['first_name']) ? $submissionData['first_name'] : 'Student';
         $formTitle = $formData['title'];
-        $successMessage = isset($formData['success_message']) ? $formData['success_message'] : 'Thank you for your application. We will review it and contact you soon.';
 
         return "
         <!DOCTYPE html>
@@ -266,15 +265,13 @@ class NotificationService
         <head>
             <meta charset='utf-8'>
             <meta name='viewport' content='width=device-width, initial-scale=1.0'>
-            <title>Application Confirmation</title>
+            <title>Confirmation: Your SmartElite Laptop Application Has Been Received</title>
             <style>
                 body { font-family: Arial, sans-serif; line-height: 1.6; color: #333; margin: 0; padding: 0; }
-                .container { max-width: 600px; margin: 0 auto; padding: 20px; }
-                .header { background: #1e3a8a; color: white; padding: 20px; text-align: center; }
-                .content { padding: 30px 20px; background: #f8fafc; }
-                .footer { padding: 20px; text-align: center; color: #666; font-size: 14px; }
-                .success-icon { font-size: 48px; color: #10b981; margin-bottom: 20px; }
-                .btn { display: inline-block; padding: 12px 24px; background: #1e3a8a; color: white; text-decoration: none; border-radius: 5px; margin: 10px 0; }
+                .container { max-width: 640px; margin: 0 auto; padding: 20px; }
+                .header { background: #1e3a8a; color: #fff; padding: 24px; text-align: center; }
+                .content { padding: 28px 24px; background: #f8fafc; }
+                .footer { padding: 16px; text-align: center; color: #666; font-size: 13px; }
             </style>
         </head>
         <body>
@@ -283,21 +280,18 @@ class NotificationService
                     <h1>SmartElite Initiative</h1>
                 </div>
                 <div class='content'>
-                    <div style='text-align: center;'>
-                        <div class='success-icon'>✓</div>
-                        <h2>Application Received Successfully!</h2>
-                    </div>
                     <p>Dear {$name},</p>
-                    <p>Thank you for submitting your application for <strong>{$formTitle}</strong>.</p>
-                    <p>{$successMessage}</p>
-                    <p>We will contact you within 5-7 business days with further instructions.</p>
-                    <div style='text-align: center; margin: 30px 0;'>
-                        <a href='" . base_url('/') . "' class='btn'>Visit SmartElite</a>
-                    </div>
+                    <p>Thank you for applying to the <strong>SmartElite initiative</strong> and for your interest in our laptop program with the pay-later option.</p>
+                    <p>This email is to confirm that we have successfully received your application for <strong>{$formTitle}</strong>. Our team has begun the review process for all submissions.</p>
+                    <p>We understand your eagerness to get started and appreciate your patience. You can expect to receive another notification from us regarding the status of your application once the review is complete.</p>
+                    <p>Should you have any urgent questions, please do not hesitate to contact us at:<br>
+                    Email: <a href='mailto:support@smartelite.co.tz'>support@smartelite.co.tz</a> or Call <a href='tel:+255625199652'>+255625 199 652</a></p>
+                    <p>Thank you for being a part of the SmartElite community.</p>
+                    <p>Best regards,<br>
+                    <strong>The SmartElite Team</strong></p>
                 </div>
                 <div class='footer'>
-                    <p>SmartElite Initiative - Bridging the gap between higher education and digital inclusion in Tanzania</p>
-                    <p>This is an automated message. Please do not reply to this email.</p>
+                    <p>&copy; " . date('Y') . " SmartElite Initiative</p>
                 </div>
             </div>
         </body>
@@ -310,9 +304,9 @@ class NotificationService
     private function generateSMSTemplate(array $formData, array $submissionData): string
     {
         $name = isset($submissionData['first_name']) ? $submissionData['first_name'] : 'Applicant';
-        $formTitle = $formData['title'];
-        
-        return "Hi {$name}! Your {$formTitle} application has been received. We'll contact you within 5-7 business days. - SmartElite Initiative";
+        return "Hi {$name}!
+We have received your application and are reviewing it carefully. We'll be sure to update you the moment the process is complete.
+Thank you for your patience!";
     }
 
     /**

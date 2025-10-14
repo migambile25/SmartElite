@@ -27,19 +27,35 @@ class NotificationService
      */
     private function loadEnvironmentConfig()
     {
+        // Brevo API Configuration
         $this->config->brevo['api_key'] = isset($_ENV['BREVO_API_KEY']) ? $_ENV['BREVO_API_KEY'] : '';
         $this->config->brevo['sender_email'] = isset($_ENV['BREVO_SENDER_EMAIL']) ? $_ENV['BREVO_SENDER_EMAIL'] : 'noreply@smartelite.tz';
         $this->config->brevo['reply_to'] = isset($_ENV['BREVO_REPLY_TO']) ? $_ENV['BREVO_REPLY_TO'] : 'support@smartelite.tz';
         
-        $this->config->textify['api_key'] = isset($_ENV['TEXTIFY_API_KEY']) ? $_ENV['TEXTIFY_API_KEY'] : '';
-        $this->config->textify['sender_id'] = isset($_ENV['TEXTIFY_SENDER_ID']) ? $_ENV['TEXTIFY_SENDER_ID'] : 'SmartElite';
+        // Brevo SMTP Configuration
+        $this->config->brevo['smtp_host'] = isset($_ENV['BREVO_SMTP_HOST']) ? $_ENV['BREVO_SMTP_HOST'] : 'smtp-relay.brevo.com';
+        $this->config->brevo['smtp_port'] = isset($_ENV['BREVO_SMTP_PORT']) ? (int)$_ENV['BREVO_SMTP_PORT'] : 587;
+        $this->config->brevo['smtp_username'] = isset($_ENV['BREVO_SMTP_USERNAME']) ? $_ENV['BREVO_SMTP_USERNAME'] : '';
+        $this->config->brevo['smtp_password'] = isset($_ENV['BREVO_SMTP_PASSWORD']) ? $_ENV['BREVO_SMTP_PASSWORD'] : '';
+        $this->config->brevo['smtp_encryption'] = isset($_ENV['BREVO_SMTP_ENCRYPTION']) ? $_ENV['BREVO_SMTP_ENCRYPTION'] : 'tls';
         
+        // Textify Configuration
+        $this->config->textify['api_key'] = isset($_ENV['TEXTIFY_API_KEY']) ? $_ENV['TEXTIFY_API_KEY'] : '';
+        $this->config->textify['sender_id'] = isset($_ENV['TEXTIFY_SENDER']) ? $_ENV['TEXTIFY_SENDER'] : 'SmartElite';
+        
+        // Override API URL if provided in env
+        if (isset($_ENV['TEXTIFY_API_BASE_URL'])) {
+            $this->config->textify['api_url'] = $_ENV['TEXTIFY_API_BASE_URL'];
+        }
+        
+        // Notification Settings
+        $this->config->settings['email_method'] = isset($_ENV['EMAIL_METHOD']) ? $_ENV['EMAIL_METHOD'] : 'api';
         $this->config->settings['admin_notification_email'] = isset($_ENV['ADMIN_NOTIFICATION_EMAIL']) ? $_ENV['ADMIN_NOTIFICATION_EMAIL'] : 'admin@smartelite.tz';
         $this->config->settings['admin_notification_sms'] = isset($_ENV['ADMIN_NOTIFICATION_SMS']) ? $_ENV['ADMIN_NOTIFICATION_SMS'] : '+255123456789';
     }
 
     /**
-     * Send email notification using Brevo API
+     * Send email notification using either Brevo API or SMTP with fallback
      */
     public function sendEmail(array $to, string $subject, string $htmlContent, ?string $textContent = null): bool
     {
@@ -48,6 +64,34 @@ class NotificationService
             return true;
         }
 
+        $method = 'api'; // Force API method for now
+        
+        // Debug logging to see what method is being used
+        $this->logger->info('Email method determined', [
+            'method' => $method,
+            'env_value' => $_ENV['EMAIL_METHOD'] ?? 'not_set',
+            'config_value' => $this->config->settings['email_method'] ?? 'not_set'
+        ]);
+        
+        if ($method === 'smtp') {
+            // Try SMTP first, fallback to API if it fails
+            $smtpResult = $this->sendEmailViaSMTP($to, $subject, $htmlContent, $textContent);
+            if ($smtpResult) {
+                return true;
+            } else {
+                $this->logger->warning('SMTP failed, falling back to API method');
+                return $this->sendEmailViaAPI($to, $subject, $htmlContent, $textContent);
+            }
+        } else {
+            return $this->sendEmailViaAPI($to, $subject, $htmlContent, $textContent);
+        }
+    }
+
+    /**
+     * Send email notification using Brevo API
+     */
+    private function sendEmailViaAPI(array $to, string $subject, string $htmlContent, ?string $textContent = null): bool
+    {
         if (empty($this->config->brevo['api_key'])) {
             $this->logger->error('Brevo API key not configured');
             return false;
@@ -80,10 +124,10 @@ class NotificationService
             ]);
 
             if ($response->getStatusCode() === 201) {
-                $this->logger->info('Email sent successfully via Brevo', ['to' => $to, 'subject' => $subject]);
+                $this->logger->info('Email sent successfully via Brevo API', ['to' => $to, 'subject' => $subject]);
                 return true;
             } else {
-                $this->logger->error('Failed to send email via Brevo', [
+                $this->logger->error('Failed to send email via Brevo API', [
                     'status' => $response->getStatusCode(),
                     'response' => $response->getBody()
                 ]);
@@ -91,7 +135,104 @@ class NotificationService
             }
 
         } catch (\Exception $e) {
-            $this->logger->error('Exception sending email via Brevo', ['error' => $e->getMessage()]);
+            $this->logger->error('Exception sending email via Brevo API', [
+                'error' => $e->getMessage(),
+                'api_key_configured' => !empty($this->config->brevo['api_key']),
+                'sender_email' => $this->config->brevo['sender_email'],
+                'to' => $to
+            ]);
+            return false;
+        }
+    }
+
+    /**
+     * Send email notification using Brevo SMTP
+     */
+    private function sendEmailViaSMTP(array $to, string $subject, string $htmlContent, ?string $textContent = null): bool
+    {
+        if (empty($this->config->brevo['smtp_username']) || empty($this->config->brevo['smtp_password'])) {
+            $this->logger->error('Brevo SMTP credentials not configured');
+            return false;
+        }
+
+        try {
+            // Get CodeIgniter's email service
+            $email = \Config\Services::email();
+            
+            // Configure SMTP settings with proper Brevo configuration
+            $email->initialize([
+                'protocol' => 'smtp',
+                'SMTPHost' => $this->config->brevo['smtp_host'],
+                'SMTPPort' => $this->config->brevo['smtp_port'],
+                'SMTPUser' => $this->config->brevo['smtp_username'],
+                'SMTPPass' => $this->config->brevo['smtp_password'],
+                'SMTPCrypto' => $this->config->brevo['smtp_encryption'],
+                'SMTPTimeout' => 30, // Increased timeout
+                'SMTPKeepAlive' => false,
+                'mailType' => 'html',
+                'charset' => 'utf-8',
+                'wordWrap' => true,
+                'wrapChars' => 76,
+                'validate' => true, // Enable validation
+                'priority' => 3,
+                'CRLF' => "\r\n",
+                'newline' => "\r\n",
+                'BCCBatchMode' => false,
+                'BCCBatchSize' => 200,
+                'DSN' => false,
+            ]);
+
+            // Set sender information
+            $email->setFrom($this->config->brevo['sender_email'], 'SmartElite Initiative');
+            $email->setReplyTo($this->config->brevo['reply_to'], 'SmartElite Initiative');
+            
+            // Set recipients
+            $recipients = [];
+            foreach ($to as $recipient) {
+                if (isset($recipient['email'])) {
+                    $recipients[] = $recipient['email'];
+                }
+            }
+            $email->setTo($recipients);
+            
+            // Set subject and content
+            $email->setSubject($subject);
+            $email->setMessage($htmlContent);
+            
+            // Add text version if provided
+            if ($textContent) {
+                $email->setAltMessage($textContent);
+            }
+
+            // Send the email
+            if ($email->send()) {
+                $this->logger->info('Email sent successfully via Brevo SMTP', [
+                    'to' => $recipients, 
+                    'subject' => $subject,
+                    'smtp_host' => $this->config->brevo['smtp_host'],
+                    'smtp_port' => $this->config->brevo['smtp_port']
+                ]);
+                return true;
+            } else {
+                $debugInfo = $email->printDebugger(['headers']);
+                $this->logger->error('Failed to send email via Brevo SMTP', [
+                    'error' => $debugInfo,
+                    'to' => $recipients,
+                    'subject' => $subject,
+                    'smtp_host' => $this->config->brevo['smtp_host'],
+                    'smtp_port' => $this->config->brevo['smtp_port'],
+                    'smtp_username' => $this->config->brevo['smtp_username']
+                ]);
+                return false;
+            }
+
+        } catch (\Exception $e) {
+            $this->logger->error('Exception sending email via Brevo SMTP', [
+                'error' => $e->getMessage(),
+                'smtp_configured' => !empty($this->config->brevo['smtp_username']),
+                'smtp_host' => $this->config->brevo['smtp_host'],
+                'to' => $to
+            ]);
             return false;
         }
     }
@@ -167,7 +308,12 @@ class NotificationService
             return false;
 
         } catch (\Exception $e) {
-            $this->logger->error('Exception sending SMS via Textify', ['error' => $e->getMessage()]);
+            $this->logger->error('Exception sending SMS via Textify', [
+                'error' => $e->getMessage(),
+                'api_key_configured' => !empty($this->config->textify['api_key']),
+                'sender_id' => $this->config->textify['sender_id'],
+                'phone' => $phoneNumber
+            ]);
             return false;
         }
     }
@@ -427,24 +573,141 @@ Thank you for your patience!";
      */
     public function testEmailConfiguration(): array
     {
+        $method = $this->config->settings['email_method'] ?? 'api';
+        
         $result = [
+            'method' => $method,
             'api_key_configured' => !empty($this->config->brevo['api_key']),
+            'smtp_configured' => !empty($this->config->brevo['smtp_username']) && !empty($this->config->brevo['smtp_password']),
             'sender_email_configured' => !empty($this->config->brevo['sender_email']),
             'test_sent' => false,
             'error' => null
         ];
 
-        if ($result['api_key_configured'] && $result['sender_email_configured']) {
+        // Check if the selected method is properly configured
+        if ($method === 'smtp' && !$result['smtp_configured']) {
+            $result['error'] = 'SMTP method selected but credentials not configured';
+            return $result;
+        }
+        
+        if ($method === 'api' && !$result['api_key_configured']) {
+            $result['error'] = 'API method selected but API key not configured';
+            return $result;
+        }
+
+        if ($result['sender_email_configured']) {
             try {
                 $testEmail = $this->sendEmail(
                     [['email' => $this->config->settings['admin_notification_email'], 'name' => 'Test']],
                     'SmartElite Email Test',
-                    '<h1>Email Test Successful</h1><p>Your Brevo email configuration is working correctly.</p>'
+                    '<h1>Email Test Successful</h1><p>Your Brevo email configuration is working correctly using ' . strtoupper($method) . ' method.</p>'
                 );
                 $result['test_sent'] = $testEmail;
             } catch (\Exception $e) {
                 $result['error'] = $e->getMessage();
             }
+        }
+
+        return $result;
+    }
+
+    /**
+     * Test both API and SMTP configurations
+     */
+    public function testBothEmailMethods(): array
+    {
+        $results = [
+            'api' => [
+                'method' => 'api',
+                'configured' => !empty($this->config->brevo['api_key']),
+                'test_sent' => false,
+                'error' => null
+            ],
+            'smtp' => [
+                'method' => 'smtp',
+                'configured' => !empty($this->config->brevo['smtp_username']) && !empty($this->config->brevo['smtp_password']),
+                'test_sent' => false,
+                'error' => null
+            ]
+        ];
+
+        // Test API method
+        if ($results['api']['configured']) {
+            try {
+                $originalMethod = $this->config->settings['email_method'];
+                $this->config->settings['email_method'] = 'api';
+                
+                $testResult = $this->sendEmail(
+                    [['email' => $this->config->settings['admin_notification_email'], 'name' => 'Test']],
+                    'SmartElite Email Test - API Method',
+                    '<h1>Email Test Successful</h1><p>Your Brevo email configuration is working correctly using API method.</p>'
+                );
+                $results['api']['test_sent'] = $testResult;
+                
+                $this->config->settings['email_method'] = $originalMethod;
+            } catch (\Exception $e) {
+                $results['api']['error'] = $e->getMessage();
+            }
+        }
+
+        // Test SMTP method
+        if ($results['smtp']['configured']) {
+            try {
+                $originalMethod = $this->config->settings['email_method'];
+                $this->config->settings['email_method'] = 'smtp';
+                
+                $testResult = $this->sendEmail(
+                    [['email' => $this->config->settings['admin_notification_email'], 'name' => 'Test']],
+                    'SmartElite Email Test - SMTP Method',
+                    '<h1>Email Test Successful</h1><p>Your Brevo email configuration is working correctly using SMTP method.</p>'
+                );
+                $results['smtp']['test_sent'] = $testResult;
+                
+                $this->config->settings['email_method'] = $originalMethod;
+            } catch (\Exception $e) {
+                $results['smtp']['error'] = $e->getMessage();
+            }
+        }
+
+        return $results;
+    }
+
+    /**
+     * Test SMTP connectivity
+     */
+    public function testSMTPConnectivity(): array
+    {
+        $result = [
+            'host' => $this->config->brevo['smtp_host'],
+            'port' => $this->config->brevo['smtp_port'],
+            'username' => $this->config->brevo['smtp_username'],
+            'password_configured' => !empty($this->config->brevo['smtp_password']),
+            'dns_resolution' => false,
+            'connection_test' => false,
+            'error' => null
+        ];
+
+        // Test DNS resolution
+        try {
+            $ip = gethostbyname($this->config->brevo['smtp_host']);
+            $result['dns_resolution'] = ($ip !== $this->config->brevo['smtp_host']);
+            $result['resolved_ip'] = $ip;
+        } catch (\Exception $e) {
+            $result['error'] = 'DNS resolution failed: ' . $e->getMessage();
+            return $result;
+        }
+
+        // Test basic SMTP connection (without authentication)
+        try {
+            $connection = @fsockopen($this->config->brevo['smtp_host'], $this->config->brevo['smtp_port'], $errno, $errstr, 10);
+            if ($connection) {
+                $result['connection_test'] = true;
+                fclose($connection);
+            } else {
+                $result['error'] = "Connection failed: $errstr ($errno)";
+            }
+        } catch (\Exception $e) {
+            $result['error'] = 'Connection test failed: ' . $e->getMessage();
         }
 
         return $result;

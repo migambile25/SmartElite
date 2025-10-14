@@ -112,16 +112,22 @@ class NotificationService
         }
 
         try {
-            // Clean phone number (remove spaces, add country code if needed)
+            // Normalize phone number and sender ID to Textify/E.164 requirements
             $phoneNumber = $this->cleanPhoneNumber($phoneNumber);
+            $senderId = $this->normalizeSenderId($this->config->textify['sender_id']);
+
+            if ($phoneNumber === '') {
+                $this->logger->error('SMS not sent: invalid phone number after normalization');
+                return false;
+            }
 
             $payload = [
                 'to' => $phoneNumber,
                 'message' => $message,
-                'sender_id' => $this->config->textify['sender_id']
+                'sender_id' => $senderId,
             ];
 
-            $response = $this->client->post($this->config->textify['api_url'] . '/sms/send', [
+            $response = $this->client->post(rtrim($this->config->textify['api_url'], '/') . '/sms/send', [
                 'headers' => [
                     'Accept' => 'application/json',
                     'Content-Type' => 'application/json',
@@ -131,16 +137,34 @@ class NotificationService
                 'timeout' => 30
             ]);
 
-            if ($response->getStatusCode() === 200) {
-                $this->logger->info('SMS sent successfully via Textify', ['to' => $phoneNumber]);
-                return true;
-            } else {
-                $this->logger->error('Failed to send SMS via Textify', [
-                    'status' => $response->getStatusCode(),
-                    'response' => $response->getBody()
-                ]);
-                return false;
+            $status = $response->getStatusCode();
+            $body = (string) $response->getBody();
+
+            if ($status >= 200 && $status < 300) {
+                // Try parse JSON and check success flags if provided
+                $ok = true;
+                $json = json_decode($body, true);
+                if (json_last_error() === JSON_ERROR_NONE && is_array($json)) {
+                    if (isset($json['success']) && $json['success'] === false) {
+                        $ok = false;
+                    }
+                    if (isset($json['status']) && in_array(strtolower((string) $json['status']), ['failed', 'error'], true)) {
+                        $ok = false;
+                    }
+                }
+
+                if ($ok) {
+                    $this->logger->info('SMS sent successfully via Textify', ['to' => $phoneNumber, 'response' => $body]);
+                    return true;
+                }
             }
+
+            $this->logger->error('Failed to send SMS via Textify', [
+                'status' => $status,
+                'payload' => $payload,
+                'response' => $body,
+            ]);
+            return false;
 
         } catch (\Exception $e) {
             $this->logger->error('Exception sending SMS via Textify', ['error' => $e->getMessage()]);
@@ -346,19 +370,62 @@ class NotificationService
      */
     private function cleanPhoneNumber(string $phoneNumber): string
     {
-        // Remove all non-numeric characters except +
-        $phoneNumber = preg_replace('/[^0-9+]/', '', $phoneNumber);
-        
-        // If it doesn't start with +, assume it's a Tanzanian number and add +255
-        if (substr($phoneNumber, 0, 1) !== '+') {
-            // Remove leading 0 if present
-            if (substr($phoneNumber, 0, 1) === '0') {
-                $phoneNumber = substr($phoneNumber, 1);
-            }
-            $phoneNumber = '+255' . $phoneNumber;
+        // Normalize to E.164. Accept inputs like 0712..., +255712..., 255712..., 712...
+        $raw = trim($phoneNumber);
+        if ($raw === '') {
+            return '';
         }
-        
-        return $phoneNumber;
+
+        // Remove non-digits except leading +
+        $normalized = preg_replace('/[^0-9+]/', '', $raw);
+
+        // If starts with '+' assume E.164 (validate Tanzania default)
+        if (strpos($normalized, '+') === 0) {
+            // Ensure + followed by digits only
+            if (!preg_match('/^\+[0-9]{7,15}$/', $normalized)) {
+                return '';
+            }
+            return $normalized;
+        }
+
+        // If starts with '255', add '+'
+        if (strpos($normalized, '255') === 0) {
+            $candidate = '+' . $normalized;
+            return preg_match('/^\+255[0-9]{7,12}$/', $candidate) ? $candidate : $candidate; // keep as is
+        }
+
+        // If starts with '0', drop it and prepend +255
+        if (strpos($normalized, '0') === 0) {
+            $digits = substr($normalized, 1);
+            return '+255' . $digits;
+        }
+
+        // If starts with a 7 or 6 (common TZ mobile prefixes), prepend +255
+        if (preg_match('/^[67][0-9]{7,}$/', $normalized)) {
+            return '+255' . $normalized;
+        }
+
+        // Fallback: if only digits, prepend +255
+        if (preg_match('/^[0-9]+$/', $normalized)) {
+            return '+255' . $normalized;
+        }
+
+        return '';
+    }
+
+    /**
+     * Ensure sender ID meets common SMS gateway constraints (<= 11 chars, alphanumeric).
+     */
+    private function normalizeSenderId(string $senderId): string
+    {
+        $id = preg_replace('/[^A-Za-z0-9]/', '', $senderId);
+        if ($id === '' ) {
+            $id = 'SmartElite';
+        }
+        if (strlen($id) > 11) {
+            $id = substr($id, 0, 11);
+        }
+        return $id;
     }
 
     /**

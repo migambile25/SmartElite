@@ -81,8 +81,8 @@
                     </div>
                     <h4 class="card-title mb-4">Our Solution</h4>
                     <p class="card-text">
-                        SmartElite provides students with <strong>affordable laptops at TZS 300,000</strong>, 
-                        payable in two structured installments per semester directly from their allowances. 
+                        SmartElite provides students with affordable laptops at affordable prices, 
+                        payable in structured installments per semester directly from their allowances. 
                         Starting with a target of <strong>5,000 beneficiaries across 20 universities</strong> 
                         in 2025/26.
                     </p>
